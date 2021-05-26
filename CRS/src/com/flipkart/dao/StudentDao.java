@@ -48,6 +48,7 @@ public class StudentDao implements StudentDaoInterface {
 			prep_stmt.setString(6, student.getRollNo());
 			prep_stmt.setString(7, student.getDepartment());
 			prep_stmt.setString(8, student.getYearOfJoining());
+			prep_stmt.setString(9, Boolean.toString(false));
 			prep_stmt.executeUpdate();
 			CredentialsDaoInterface credentialsDao = CredentialsDao.getInstance();
 			credentialsDao.saveCredentials(new UserLogin(student.getId(), student.getId(), UserRole.STUDENT));

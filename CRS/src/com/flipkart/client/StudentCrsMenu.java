@@ -4,6 +4,7 @@
 package com.flipkart.client;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.flipkart.bean.Course;
+import com.flipkart.bean.CourseRegistration;
 import com.flipkart.bean.Credit;
 import com.flipkart.bean.Debit;
 import com.flipkart.bean.Payment;
@@ -47,12 +49,13 @@ public class StudentCrsMenu {
 		while(true) {
 			logger.info("\n----------Student Menu-----------");
 			logger.info("Press 1 to view all courses");
-			logger.info("Press 2 to add a course");
-			logger.info("Press 3 to drop a course");
-			logger.info("Press 4 to view registered courses");
-			logger.info("Press 5 to view grades (Report Card)");
-			logger.info("Press 6 to pay fees");
-			logger.info("Press 7 to Logout");
+			logger.info("Press 2 for course registration");
+			logger.info("Press 3 to add a course");
+			logger.info("Press 4 to drop a course");
+			logger.info("Press 5 to view registered courses");
+			logger.info("Press 6 to view grades (Report Card)");
+			logger.info("Press 7 to pay fees");
+			logger.info("Press 8 to Logout");
 			
 			int choice=io.input.nextInt();
 			io.input.nextLine();
@@ -61,25 +64,61 @@ public class StudentCrsMenu {
 					viewAllCourses();
 					break;
 				case 2:
-					addCourse(student_id);
+					registerCourses(student_id);
 					break;
 				case 3:
+					addCourse(student_id);
+					break;
+				case 4:
 					dropCourse(student_id);
 					break;
-				case 4: 
+				case 5: 
 					viewRegisteredCourses(student_id);
 					break;
-				case 5:
+				case 6:
 					getGrades(student_id);
 					break;
-				case 6: 
+				case 7: 
 					payFees(student_id);
 					break;
-				case 7: 
+				case 8: 
 					logger.info("Logged Out Successfully!\n");
 					return;
 					
 			}
+		}
+	}
+	
+	private void registerCourses(String studentId) {
+		logger.info("\n----------Course Registration-----------");
+		logger.info("First provide the primary course choices,");
+		List<Course> primary = new ArrayList<Course>();
+		logger.info("Enter primary choice 1: ");
+		Course details = CourseUtils.getCourseDetails(io.input.nextLine());
+		primary.add(details);
+		logger.info("Enter primary choice 2: ");
+		details = CourseUtils.getCourseDetails(io.input.nextLine());
+		primary.add(details);
+		logger.info("Enter primary choice 3: ");
+		details = CourseUtils.getCourseDetails(io.input.nextLine());
+		primary.add(details);
+		logger.info("Enter primary choice 4: ");
+		details = CourseUtils.getCourseDetails(io.input.nextLine());
+		primary.add(details);
+		List<Course> secondary = new ArrayList<Course>();
+		logger.info("\nNow enter the secondary choices,");
+		logger.info("Enter secondary choice 1: ");
+		details = CourseUtils.getCourseDetails(io.input.nextLine());
+		secondary.add(details);
+		logger.info("Enter seondary choice 2: ");
+		details = CourseUtils.getCourseDetails(io.input.nextLine());
+		secondary.add(details);
+		CourseRegistration registration = new CourseRegistration((Course[]) primary.toArray(), (Course[]) secondary.toArray());
+		try {
+			studentInterface.semesterRegistration(studentId, registration);
+		}
+		catch(RegistrationFailureException ex) {
+			logger.error(ex.getException());
 		}
 	}
 	

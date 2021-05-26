@@ -12,7 +12,7 @@ public class CourseUtils {
 		return courseDao.getCourseList();
 	}
 	
-	public static void getCourseDetails(String courseId) {
+	public static Course getCourseDetails(String courseId) {
 		
 	}
 }

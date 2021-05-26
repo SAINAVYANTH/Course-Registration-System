@@ -46,8 +46,8 @@ public class SQLQueries {
 	public static final String VIEW_REGIS_COURSES ="select courseid from registration where studentid=?";
 	public static final String CLEAR_STUDENT_COURSES ="delete from registration where studentid = ?";
 	
-	//*******REGISTRATION DAO********//	
-	public static final String ADD_STUDENT ="insert into students values(?,?,?,?,?,?,?,?)";
+	//*******STUDENT DAO********//	
+	public static final String ADD_STUDENT ="insert into students values(?,?,?,?,?,?,?,?,?)";
 	public static final String GET_STUDENT_DETAILS ="select * from students where id=?";
 	public static final String DEL_STUDENT ="delete from students where id = ?";
 }
