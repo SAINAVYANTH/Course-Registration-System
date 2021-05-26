@@ -8,18 +8,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.flipkart.bean.Course;
+import com.flipkart.constants.SQLQueries;
 import com.flipkart.constants.Status;
 import com.flipkart.exception.InvalidCourseIdException;
 import com.flipkart.utils.DBUtils;
 
-public class CourseDAO implements CourseDaoInterface{
-	private static CourseDAO instance = null;
+public class CourseDao implements CourseDaoInterface{
+	private static volatile CourseDao instance = null;
 	
-	private CourseDAO() {};
+	private CourseDao() {};
 	
-	public static CourseDAO getInstance() {
+	public static CourseDao getInstance() {
 		if (instance == null) {
-			instance = new CourseDAO();
+			synchronized (CourseDao.class) {
+				instance = new CourseDao();
+			}
 		}
 		return instance;
 	}
@@ -30,7 +33,7 @@ public class CourseDAO implements CourseDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "insert into courses values(?,?,?)";
+			String raw_stmt = SQLQueries.ADD_NEW_COURSE;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, details.getCourseId());
 			prep_stmt.setString(2, details.getCourseName());
@@ -55,7 +58,7 @@ public class CourseDAO implements CourseDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "select * from courses where courseid=?";
+			String raw_stmt = SQLQueries.GET_COURSE_DETAILS; 
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, courseId);
 			ResultSet result =  prep_stmt.executeQuery();
@@ -79,7 +82,7 @@ public class CourseDAO implements CourseDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "delete from courses where courseid=?";
+			String raw_stmt = SQLQueries.REMOVE_COURSE;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, courseId);
 			prep_stmt.executeUpdate();
@@ -102,7 +105,7 @@ public class CourseDAO implements CourseDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "select * from courses";
+			String raw_stmt = SQLQueries.GET_COURSE_LIST;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			ResultSet result =  prep_stmt.executeQuery();
 			List<Course> courseList = new ArrayList<Course>();
@@ -128,7 +131,7 @@ public class CourseDAO implements CourseDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "update courses set instructor=?  where courseid=?";
+			String raw_stmt = SQLQueries.UPDATE_COURSE_DETAILS;
 			prep_stmt = conn.prepareStatement(raw_stmt);	
 			prep_stmt.setString(1, id);
 			prep_stmt.setString(2, courseId);
@@ -153,7 +156,7 @@ public class CourseDAO implements CourseDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "select * from courses where instructor=?";
+			String raw_stmt = SQLQueries.GET_TEACHING_COURSES;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, id);
 			ResultSet result =  prep_stmt.executeQuery();

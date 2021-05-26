@@ -6,19 +6,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.flipkart.bean.UserLogin;
+import com.flipkart.constants.SQLQueries;
 import com.flipkart.constants.Status;
 import com.flipkart.constants.UserRole;
 import com.flipkart.exception.InvalidCredentialsException;
 import com.flipkart.utils.DBUtils;
 
-public class CredentialsDAO implements CredentialsDaoInterface{
-private static CredentialsDAO instance = null;
+public class CredentialsDao implements CredentialsDaoInterface{
 	
-	private CredentialsDAO() {};
+	private static volatile CredentialsDao instance = null;
 	
-	public static CredentialsDAO getInstance() {
+	private CredentialsDao() {};
+	
+	public static CredentialsDao getInstance() {
 		if (instance == null) {
-			instance = new CredentialsDAO();
+			synchronized(CredentialsDao.class) {
+				instance = new CredentialsDao();
+			}
 		}
 		return instance;
 	}
@@ -28,7 +32,7 @@ private static CredentialsDAO instance = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "insert into credentials values(?,?,?)";
+			String raw_stmt = SQLQueries.SAVE_CREDENTIALS;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, details.getUserId());
 			prep_stmt.setString(2, details.getPassword());
@@ -53,12 +57,11 @@ private static CredentialsDAO instance = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "select * from credentials where username=?";
+			String raw_stmt = SQLQueries.VERIFY_CREDENTIALS;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, username);
 			ResultSet result =  prep_stmt.executeQuery();
 			result.absolute(1);
-			System.out.println("Role:" + result.getString(3));
 			if (password.equals(result.getString(2))) {
 				return new UserLogin(result.getString(1), result.getString(2), UserRole.valueOf(result.getString(3)));
 			}
@@ -84,7 +87,7 @@ private static CredentialsDAO instance = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "update credentials set password=? where userid=?";
+			String raw_stmt = SQLQueries.UPDATE_CREDENTIALS;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, password);
 			prep_stmt.setString(2,username);

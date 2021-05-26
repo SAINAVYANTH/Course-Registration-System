@@ -1,9 +1,24 @@
 package com.flipkart.bean;
 
 import com.flipkart.constants.Status;
+
+import java.util.Date;
+import java.util.UUID;
+
 import com.flipkart.constants.PaymentModes;
 
 public class Payment {
+	
+	@SuppressWarnings("deprecation")
+	public Payment( PaymentModes paymentMode, String amount, Status status) {
+		super();
+		this.transactionId = UUID.randomUUID().toString();
+		this.paymentMode = paymentMode;
+		this.amount = amount;
+		this.timestamp = new Date().toLocaleString();
+		this.status = status;
+	}
+	
 	private String transactionId;
 	private PaymentModes paymentMode;
 	private String amount;

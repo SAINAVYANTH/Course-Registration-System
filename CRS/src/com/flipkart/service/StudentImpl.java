@@ -10,12 +10,15 @@ import java.util.List;
 
 import com.flipkart.bean.Course;
 import com.flipkart.bean.CourseRegistration;
+import com.flipkart.bean.Payment;
 import com.flipkart.bean.ReportCard;
 import com.flipkart.constants.Grade;
 import com.flipkart.constants.Status;
-import com.flipkart.dao.RegistrationDAO;
+import com.flipkart.dao.PaymentsDao;
+import com.flipkart.dao.PaymentsDaoInterface;
+import com.flipkart.dao.RegistrationDao;
 import com.flipkart.dao.RegistrationDaoInterface;
-import com.flipkart.dao.StudentDaoImplementation;
+import com.flipkart.dao.StudentDao;
 import com.flipkart.dao.StudentDaoInterface;
 import com.flipkart.exception.GradesNotGivenException;
 import com.flipkart.exception.InvalidCourseIdException;
@@ -26,19 +29,23 @@ import com.flipkart.exception.RegistrationFailureException;
  * @author Rohit
  *
  */
-public class StudentImplementation implements StudentInterface {
+
+public class StudentImpl implements StudentInterface {
 	
-	private static volatile StudentImplementation instance = null;
+	private static volatile StudentImpl instance = null;
 	
-	public static StudentImplementation getInstance() {
+	private StudentImpl() {};
+	
+	public static StudentImpl getInstance() {
 		if (instance == null) {
-			synchronized (StudentImplementation.class) {
-				instance = new StudentImplementation();
+			synchronized (StudentImpl.class) {
+				instance = new StudentImpl();
 			}
 		}
 		return instance;
 	}
-	StudentDaoInterface studentDaoInterface = StudentDaoImplementation.getInstance();
+	
+	StudentDaoInterface studentDaoInterface = StudentDao.getInstance();
 
 	@Override
 	public Status semesterRegistration(String studentId, CourseRegistration courses) throws RegistrationFailureException {
@@ -63,13 +70,13 @@ public class StudentImplementation implements StudentInterface {
 				}
 			}
 			if(successes<4) {
-				RegistrationDaoInterface registrationDao = RegistrationDAO.getInstance();
+				RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
 		        registrationDao.clearStudentCourses(studentId);
 				throw new RegistrationFailureException("Registration Failed");
 			}
 		}
 		else {
-			RegistrationDaoInterface registrationDao = RegistrationDAO.getInstance();
+			RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
 	        registrationDao.clearStudentCourses(studentId);
 			throw new RegistrationFailureException("Registration Failed");
 		}
@@ -79,7 +86,7 @@ public class StudentImplementation implements StudentInterface {
 	@Override
 	public Status addCourse(String studentId, String courseId)
 			throws InvalidCourseIdException, RegistrationFailureException{
-		RegistrationDaoInterface registrationDao = RegistrationDAO.getInstance();
+		RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
 		if(registrationDao.getStudentCount(courseId) >= 10) {
 			throw new RegistrationFailureException("Maximum student limit for " + courseId + " reached");
 		}
@@ -90,19 +97,19 @@ public class StudentImplementation implements StudentInterface {
 
 	@Override
 	public Status dropCourse(String studentId, String courseId) throws InvalidCourseIdException{
-		RegistrationDaoInterface registrationDao = RegistrationDAO.getInstance();
+		RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
 		return registrationDao.removeRegistration(courseId, studentId);
 	}
 
 	@Override
 	public List<Course> viewRegisteredCourses(String studentId) throws SQLException {
-		RegistrationDaoInterface registrationDao = RegistrationDAO.getInstance();
+		RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
 		return registrationDao.viewRegisteredCourses(studentId);
 	}
 
 	@Override
 	public ReportCard viewReportCard(String studentId) throws GradesNotGivenException, InvalidStudentIdException {
-		RegistrationDaoInterface registrationDao = RegistrationDAO.getInstance();
+		RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
 		Hashtable<String, Grade> grades = registrationDao.getGrades(studentId);
 		Enumeration<String> e = grades.keys();
 		 while(e.hasMoreElements()) {
@@ -113,5 +120,11 @@ public class StudentImplementation implements StudentInterface {
 	         }
 		 }
 		return new ReportCard(studentId, grades);
+	}
+
+	@Override
+	public Status payFee(String studentId, Payment details) {
+		PaymentsDaoInterface paymentsDao = PaymentsDao.getInstance();
+		return paymentsDao.addTransaction(studentId, details);
 	}
 }

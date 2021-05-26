@@ -8,19 +8,23 @@ import java.sql.SQLException;
 
 import com.flipkart.bean.Admin;
 import com.flipkart.bean.UserLogin;
+import com.flipkart.constants.SQLQueries;
 import com.flipkart.constants.Status;
 import com.flipkart.constants.UserRole;
 import com.flipkart.exception.InvalidAdminIdException;
 import com.flipkart.utils.DBUtils;
 
-public class AdminDAO implements AdminDaoInterface{
-	private static AdminDAO instance = null;
+public class AdminDao implements AdminDaoInterface{
 	
-	private AdminDAO() {};
+	private static volatile AdminDao instance = null;
 	
-	public static AdminDAO getInstance() {
+	private AdminDao() {};
+	
+	public static AdminDao getInstance() {
 		if (instance == null) {
-			instance = new AdminDAO();
+			synchronized (AdminDao.class) {
+				instance = new AdminDao();
+			}
 		}
 		return instance;
 	}
@@ -30,7 +34,7 @@ public class AdminDAO implements AdminDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "insert into admins values(?,?,?,?,?)";
+			String raw_stmt = SQLQueries.SAVE_ADMIN;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, details.getId());
 			prep_stmt.setString(2, details.getName());
@@ -38,7 +42,7 @@ public class AdminDAO implements AdminDaoInterface{
 			prep_stmt.setString(4, details.getEmail());
 			prep_stmt.setString(5, details.getAddress());
 			prep_stmt.executeUpdate();
-			CredentialsDaoInterface credentialsDao = CredentialsDAO.getInstance();
+			CredentialsDaoInterface credentialsDao = CredentialsDao.getInstance();
 			credentialsDao.saveCredentials(new UserLogin(details.getId(), details.getId(), UserRole.ADMIN));
 			return Status.SUCCESS;
 		}catch(SQLException se){
@@ -59,7 +63,7 @@ public class AdminDAO implements AdminDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "select * from admins where id=?";
+			String raw_stmt = SQLQueries.GET_ADMIN;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, id);
 			ResultSet result =  prep_stmt.executeQuery();

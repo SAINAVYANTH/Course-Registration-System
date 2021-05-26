@@ -1,26 +1,20 @@
 package com.flipkart.bean;
 
+import com.flipkart.constants.PaymentModes;
+import com.flipkart.constants.Status;
+
 public class Credit extends Payment{
 	private String number;
-	private String type;
-	private String expiryDate;
+	
+	public Credit(String amount, Status status, String number) {
+		super(PaymentModes.CREDIT, amount, status);
+		this.number = number;
+	}
 	
 	public String getNumber() {
 		return number;
 	}
 	public void setNumber(String number) {
 		this.number = number;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public String getExpiryDate() {
-		return expiryDate;
-	}
-	public void setExpiryDate(String expiryDate) {
-		this.expiryDate = expiryDate;
 	}
 }

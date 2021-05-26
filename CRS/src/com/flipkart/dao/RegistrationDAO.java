@@ -14,18 +14,17 @@ import com.flipkart.bean.Student;
 import com.flipkart.constants.Grade;
 import com.flipkart.constants.SQLQueries;
 import com.flipkart.constants.Status;
-import com.flipkart.exception.InvalidCourseIdException;
 import com.flipkart.exception.InvalidStudentIdException;
 import com.flipkart.utils.DBUtils;
 
-public class RegistrationDAO implements RegistrationDaoInterface{
-	private static RegistrationDAO instance = null;
+public class RegistrationDao implements RegistrationDaoInterface{
+	private static volatile RegistrationDao instance = null;
 	
-	private RegistrationDAO() {};
-	
-	public static RegistrationDAO getInstance() {
+	public static RegistrationDao getInstance() {
 		if (instance == null) {
-			instance = new RegistrationDAO();
+			synchronized(RegistrationDao.class) {
+				instance = new RegistrationDao();
+			}
 		}
 		return instance;	
 	}
@@ -35,7 +34,7 @@ public class RegistrationDAO implements RegistrationDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "insert into registration values(?,?,?)";
+			String raw_stmt = SQLQueries.SAVE_NEW_REG;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, courseId);
 			prep_stmt.setString(2, studentId);
@@ -111,7 +110,7 @@ public class RegistrationDAO implements RegistrationDaoInterface{
 		PreparedStatement prep_stmt = null;
 	    try {
 	        conn = DBUtils.getConnection();
-	        PreparedStatement stmt = conn.prepareStatement("update registration set grade=? where courseid=? AND studentid=?");
+	        PreparedStatement stmt = conn.prepareStatement(SQLQueries.ADD_GRADE);
 	        Enumeration<String> e = ht.keys();
 	        while(e.hasMoreElements()) {
 	            String studentID = e.nextElement();
@@ -143,7 +142,7 @@ public class RegistrationDAO implements RegistrationDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "select count(*) from registration where courseid=?";
+			String raw_stmt = SQLQueries.GET_STUDENT_CNT;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, courseId);
 			ResultSet result = prep_stmt.executeQuery();
@@ -167,14 +166,14 @@ public class RegistrationDAO implements RegistrationDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "select studentid from registration where courseid=?";
+			String raw_stmt = SQLQueries.VIEW_ENROLL_STUDENTS;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, courseId);
 			ResultSet result = prep_stmt.executeQuery();
 			List<Student> students = new ArrayList<Student>();
 			while(result.next()) {
 				String studentId = result.getString(1);
-				StudentDaoInterface studentDao = StudentDaoImplementation.getInstance();
+				StudentDaoInterface studentDao = StudentDao.getInstance();
 				Student studentDetails = studentDao.getStudentDetails(studentId);
 				students.add(studentDetails);
 			}
@@ -198,14 +197,14 @@ public class RegistrationDAO implements RegistrationDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "select courseid from registration where studentid=?";
+			String raw_stmt = SQLQueries.VIEW_REGIS_COURSES;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, studentId);
 			ResultSet result = prep_stmt.executeQuery();
 			List<Course> courses = new ArrayList<Course>();
 			while(result.next()) {
 				String courseId = result.getString(1);
-				CourseDaoInterface courseDao = CourseDAO.getInstance();
+				CourseDaoInterface courseDao = CourseDao.getInstance();
 				Course courseDetails = courseDao.getCourseDetails(courseId);
 				courses.add(courseDetails);
 			}
@@ -229,7 +228,7 @@ public class RegistrationDAO implements RegistrationDaoInterface{
 		PreparedStatement stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			stmt = conn.prepareStatement("DELETE FROM TABLE REGISTRATION WHERE studentid = ?");
+			stmt = conn.prepareStatement(SQLQueries.CLEAR_STUDENT_COURSES);
 	        stmt.setString(1, studentId.toString());
 	        stmt.executeUpdate();
 	        return Status.SUCCESS;

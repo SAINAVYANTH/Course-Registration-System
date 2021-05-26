@@ -8,21 +8,24 @@ import java.sql.SQLException;
 
 import com.flipkart.bean.Student;
 import com.flipkart.bean.UserLogin;
+import com.flipkart.constants.SQLQueries;
 import com.flipkart.constants.Status;
 import com.flipkart.constants.UserRole;
 import com.flipkart.exception.InvalidStudentIdException;
 import com.flipkart.utils.DBUtils;
 
-public class StudentDaoImplementation implements StudentDaoInterface {
+public class StudentDao implements StudentDaoInterface {
 
-	private static volatile StudentDaoImplementation instance=null;
-	private PreparedStatement stmt = null;
-	public static StudentDaoImplementation getInstance()
+	private static volatile StudentDao instance=null;
+	
+	private StudentDao() {};
+	
+	public static StudentDao getInstance()
 	{
 		if(instance==null)
 		{
-			synchronized(StudentDaoImplementation.class){
-				instance=new StudentDaoImplementation();
+			synchronized(StudentDao.class){
+				instance=new StudentDao();
 			}
 		}
 		return instance;
@@ -35,7 +38,7 @@ public class StudentDaoImplementation implements StudentDaoInterface {
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "insert into students values(?,?,?,?,?,?,?,?)";
+			String raw_stmt = SQLQueries.ADD_STUDENT;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, student.getId());
 			prep_stmt.setString(2, student.getName());
@@ -46,7 +49,7 @@ public class StudentDaoImplementation implements StudentDaoInterface {
 			prep_stmt.setString(7, student.getDepartment());
 			prep_stmt.setString(8, student.getYearOfJoining());
 			prep_stmt.executeUpdate();
-			CredentialsDaoInterface credentialsDao = CredentialsDAO.getInstance();
+			CredentialsDaoInterface credentialsDao = CredentialsDao.getInstance();
 			credentialsDao.saveCredentials(new UserLogin(student.getId(), student.getId(), UserRole.STUDENT));
 			return Status.SUCCESS;
 		}catch(SQLException se){
@@ -67,7 +70,7 @@ public class StudentDaoImplementation implements StudentDaoInterface {
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "select * from students where id=?";
+			String raw_stmt = SQLQueries.GET_STUDENT_DETAILS;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, studentId);
 			ResultSet result =  prep_stmt.executeQuery();
@@ -92,10 +95,10 @@ public class StudentDaoImplementation implements StudentDaoInterface {
 		PreparedStatement prep_stmt = null;
 	    try{
 	    	conn = DBUtils.getConnection();
-	        stmt = conn.prepareStatement("DELETE FROM TABLE STUDENT WHERE ID = ?");
-	        stmt.setString(1, studentID.toString());
-	        stmt.executeUpdate();
-	        RegistrationDaoInterface registrationDao = RegistrationDAO.getInstance();
+	        prep_stmt = conn.prepareStatement(SQLQueries.DEL_STUDENT);
+	        prep_stmt.setString(1, studentID.toString());
+	        prep_stmt.executeUpdate();
+	        RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
 	        return registrationDao.clearStudentCourses(studentID);
 	    }catch(SQLException se){
 			se.printStackTrace();

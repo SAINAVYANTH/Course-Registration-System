@@ -8,19 +8,22 @@ import java.sql.SQLException;
 
 import com.flipkart.bean.Professor;
 import com.flipkart.bean.UserLogin;
+import com.flipkart.constants.SQLQueries;
 import com.flipkart.constants.Status;
 import com.flipkart.constants.UserRole;
 import com.flipkart.exception.InvalidProfessorIdException;
 import com.flipkart.utils.DBUtils;
 
-public class ProfessorDAO implements ProfessorDaoInterface{
-private static ProfessorDAO instance = null;
+public class ProfessorDao implements ProfessorDaoInterface{
+	private static volatile ProfessorDao instance = null;
 	
-	private ProfessorDAO() {};
+	private ProfessorDao() {};
 	
-	public static ProfessorDAO getInstance() {
+	public static ProfessorDao getInstance() {
 		if (instance == null) {
-			instance = new ProfessorDAO();
+			synchronized (ProfessorDao.class) {
+				instance = new ProfessorDao();
+			}
 		}
 		return instance;
 	}
@@ -31,7 +34,7 @@ private static ProfessorDAO instance = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "insert into professors values(?,?,?,?,?,?,?)";
+			String raw_stmt = SQLQueries.ADD_PROFESSOR;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, details.getId());
 			prep_stmt.setString(2, details.getName());
@@ -41,7 +44,7 @@ private static ProfessorDAO instance = null;
 			prep_stmt.setString(6, details.getDepartment());
 			prep_stmt.setString(7, details.getDesignation());
 			prep_stmt.executeUpdate();
-			CredentialsDaoInterface credentialsDao = CredentialsDAO.getInstance();
+			CredentialsDaoInterface credentialsDao = CredentialsDao.getInstance();
 			credentialsDao.saveCredentials(new UserLogin(details.getId(), details.getId(), UserRole.PROFESSOR));
 			return Status.SUCCESS;
 		}catch(SQLException se){
@@ -62,7 +65,7 @@ private static ProfessorDAO instance = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "select * from professors where id=?";
+			String raw_stmt = SQLQueries.REMOVE_PROFESSOR;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, id);
 			prep_stmt.executeUpdate();
@@ -85,7 +88,7 @@ private static ProfessorDAO instance = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = "select * from professors where id=?";
+			String raw_stmt = SQLQueries.GET_PROFESSOR_DETIALS;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, id);
 			ResultSet result =  prep_stmt.executeQuery();

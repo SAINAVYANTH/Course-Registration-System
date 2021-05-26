@@ -24,6 +24,7 @@ public class SQLQueries {
 	public static final String REMOVE_COURSE = "delete from courses where courseid=?";
 	public static final String GET_COURSE_LIST =  "select * from courses";
 	public static final String UPDATE_COURSE_DETAILS = "update courses set instructor=?  where courseid=?";
+	public static final String GET_TEACHING_COURSES = "select * from courses where instructor=?";
 	
 	//*******CREDENTIALS DAO*******//
 	public static final String SAVE_CREDENTIALS = "insert into credentials values(?,?,?)";
@@ -43,10 +44,10 @@ public class SQLQueries {
 	public static final String GET_STUDENT_CNT ="select count(*) from registration where courseid=?";
 	public static final String VIEW_ENROLL_STUDENTS ="select studentid from registration where courseid=?";
 	public static final String VIEW_REGIS_COURSES ="select courseid from registration where studentid=?";
-	public static final String CLEAR_STUDENT_COURSES ="DELETE FROM TABLE REGISTRATION WHERE studentid = ?";
+	public static final String CLEAR_STUDENT_COURSES ="delete from registration where studentid = ?";
 	
 	//*******REGISTRATION DAO********//	
 	public static final String ADD_STUDENT ="insert into students values(?,?,?,?,?,?,?,?)";
 	public static final String GET_STUDENT_DETAILS ="select * from students where id=?";
-	public static final String DEL_STUDENT ="DELETE FROM TABLE STUDENT WHERE ID = ?";
+	public static final String DEL_STUDENT ="delete from students where id = ?";
 }

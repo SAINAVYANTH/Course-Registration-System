@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.flipkart.bean.Course;
 import com.flipkart.bean.CourseRegistration;
+import com.flipkart.bean.Payment;
 import com.flipkart.bean.ReportCard;
 import com.flipkart.constants.Status;
 import com.flipkart.exception.GradesNotGivenException;
@@ -18,4 +19,5 @@ public interface StudentInterface {
 	public Status dropCourse(String studentId, String courseId) throws InvalidCourseIdException, SQLException ;
 	public List<Course> viewRegisteredCourses(String studentId) throws SQLException;
 	public ReportCard viewReportCard(String studentId) throws GradesNotGivenException, InvalidStudentIdException;
+	public Status payFee(String studentId,Payment details);
 }
