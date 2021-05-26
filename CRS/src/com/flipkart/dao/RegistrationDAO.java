@@ -11,7 +11,7 @@ import java.util.List;
 
 import com.flipkart.bean.Course;
 import com.flipkart.bean.Student;
-import com.flipkart.constants.Grade;
+import com.flipkart.constants.GradeConstants;
 import com.flipkart.constants.SQLQueries;
 import com.flipkart.constants.Status;
 import com.flipkart.exception.InvalidStudentIdException;
@@ -38,7 +38,7 @@ public class RegistrationDao implements RegistrationDaoInterface{
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, courseId);
 			prep_stmt.setString(2, studentId);
-			prep_stmt.setString(3, Grade.NOT_GRADED.toString());
+			prep_stmt.setString(3, GradeConstants.NOT_GRADED.toString());
 			prep_stmt.executeUpdate();
 			return Status.SUCCESS;
 		}catch(SQLException se){
@@ -78,7 +78,7 @@ public class RegistrationDao implements RegistrationDaoInterface{
 		return Status.FAIL;
 	}
 	
-	public Hashtable<String,Grade> getGrades(String studentId) throws InvalidStudentIdException{
+	public Hashtable<String,GradeConstants> getGrades(String studentId) throws InvalidStudentIdException{
 		Connection conn = null;
 		PreparedStatement prep_stmt = null;
 		try {
@@ -87,9 +87,9 @@ public class RegistrationDao implements RegistrationDaoInterface{
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, studentId);
 			ResultSet result = prep_stmt.executeQuery();
-			Hashtable<String, Grade> grades = new Hashtable<String, Grade>();
+			Hashtable<String, GradeConstants> grades = new Hashtable<String, GradeConstants>();
 			while(result.next()) {
-				grades.put(result.getString(1), Grade.valueOf(result.getString(2)));
+				grades.put(result.getString(1), GradeConstants.valueOf(result.getString(2)));
 			}
 			return grades;
 		}catch(SQLException se){
@@ -105,7 +105,7 @@ public class RegistrationDao implements RegistrationDaoInterface{
 		throw new InvalidStudentIdException("Invalid student id " + studentId);
 	}
 	
-	public Status addGrade(String courseID, Hashtable<String, Grade> ht){
+	public Status addGrade(String courseID, Hashtable<String, GradeConstants> ht){
 		Connection conn = null;
 		PreparedStatement prep_stmt = null;
 	    try {
@@ -114,7 +114,7 @@ public class RegistrationDao implements RegistrationDaoInterface{
 	        Enumeration<String> e = ht.keys();
 	        while(e.hasMoreElements()) {
 	            String studentID = e.nextElement();
-	            Grade grade = ht.get(studentID);
+	            GradeConstants grade = ht.get(studentID);
 
 	            stmt.setString(1, grade.toString());
 	            stmt.setString(3, studentID);

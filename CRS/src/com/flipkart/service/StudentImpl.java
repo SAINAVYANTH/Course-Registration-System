@@ -12,7 +12,8 @@ import com.flipkart.bean.Course;
 import com.flipkart.bean.CourseRegistration;
 import com.flipkart.bean.Payment;
 import com.flipkart.bean.ReportCard;
-import com.flipkart.constants.Grade;
+import com.flipkart.bean.Student;
+import com.flipkart.constants.GradeConstants;
 import com.flipkart.constants.Status;
 import com.flipkart.dao.PaymentsDao;
 import com.flipkart.dao.PaymentsDaoInterface;
@@ -55,16 +56,16 @@ public class StudentImpl implements StudentInterface {
 		for(Course each : primary) {
 			try {
 				if(addCourse(studentId, each.getCourseId()) == Status.SUCCESS) {
-					successes++;
+					successes = successes + 1;
 				}
 			}catch (InvalidCourseIdException | RegistrationFailureException ex) {}
 		}
-		if(successes < 4 && successes >=2) {
+		if(successes <= 4 && successes >=2) {
 			for(Course each : secondary) {
 				if(successes!=4) {
 					try {
 						if(addCourse(studentId, each.getCourseId()) == Status.SUCCESS) {
-							successes++;
+							successes = successes + 1;
 						}
 					}catch (InvalidCourseIdException | RegistrationFailureException ex) {}
 				}
@@ -110,12 +111,12 @@ public class StudentImpl implements StudentInterface {
 	@Override
 	public ReportCard viewReportCard(String studentId) throws GradesNotGivenException, InvalidStudentIdException {
 		RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
-		Hashtable<String, Grade> grades = registrationDao.getGrades(studentId);
+		Hashtable<String, GradeConstants> grades = registrationDao.getGrades(studentId);
 		Enumeration<String> e = grades.keys();
 		 while(e.hasMoreElements()) {
 			 String studentID = e.nextElement();
-	         Grade grade = grades.get(studentID);
-	         if (grade == Grade.NOT_GRADED) {
+	         GradeConstants grade = grades.get(studentID);
+	         if (grade == GradeConstants.NOT_GRADED) {
 	        	 throw new GradesNotGivenException("Grading not yet complete");
 	         }
 		 }
@@ -126,5 +127,17 @@ public class StudentImpl implements StudentInterface {
 	public Status payFee(String studentId, Payment details) {
 		PaymentsDaoInterface paymentsDao = PaymentsDao.getInstance();
 		return paymentsDao.addTransaction(studentId, details);
+	}
+
+	@Override
+	public void addNewStudent(Student details) {
+		StudentDaoInterface studentDao = StudentDao.getInstance();
+		studentDao.addStudent(details);
+	}
+
+	@Override
+	public boolean getVerificationStatus(String studentId) throws InvalidStudentIdException {
+		StudentDaoInterface studentDao = StudentDao.getInstance();
+		return studentDao.getVerificationStatus(studentId);
 	}
 }

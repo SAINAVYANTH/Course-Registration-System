@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.flipkart.bean.Course;
 import com.flipkart.bean.Student;
-import com.flipkart.constants.Grade;
+import com.flipkart.constants.GradeConstants;
 import com.flipkart.constants.Status;
 import com.flipkart.dao.CourseDao;
 import com.flipkart.dao.CourseDaoInterface;
@@ -66,7 +66,7 @@ public class ProfessorImpl implements ProfessorInterface{
 	 * @exception InvalidGradeException
 	 */
 	@Override
-	public void giveGrades(String id, String courseId, Hashtable<String, Grade> grades) throws InvalidGradeException {
+	public void giveGrades(String id, String courseId, Hashtable<String, GradeConstants> grades) throws InvalidGradeException {
 		RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
 		registrationDao.addGrade(courseId, grades);
 	}

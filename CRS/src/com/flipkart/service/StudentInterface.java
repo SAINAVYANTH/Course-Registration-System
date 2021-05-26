@@ -7,6 +7,7 @@ import com.flipkart.bean.Course;
 import com.flipkart.bean.CourseRegistration;
 import com.flipkart.bean.Payment;
 import com.flipkart.bean.ReportCard;
+import com.flipkart.bean.Student;
 import com.flipkart.constants.Status;
 import com.flipkart.exception.GradesNotGivenException;
 import com.flipkart.exception.InvalidCourseIdException;
@@ -57,4 +58,15 @@ public interface StudentInterface {
 	 * @param Student Id, Payment Details
 	 */
 	public Status payFee(String studentId,Payment details);
+	
+	/** Function to add a new Student to the database
+	 * @param Student details
+	 * */
+	public void addNewStudent(Student details);
+	
+	/** Function to get the verification status of a student.
+	 * @param String studentId
+	 * @throws InvalidStudentIdException
+	 * */
+	public boolean getVerificationStatus(String studentId) throws InvalidStudentIdException;
 }

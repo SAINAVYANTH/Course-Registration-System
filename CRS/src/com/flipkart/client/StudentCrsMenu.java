@@ -19,8 +19,7 @@ import com.flipkart.bean.Payment;
 import com.flipkart.bean.ReportCard;
 import com.flipkart.bean.Scholarship;
 import com.flipkart.bean.Upi;
-import com.flipkart.constants.Grade;
-import com.flipkart.constants.PaymentModes;
+import com.flipkart.constants.GradeConstants;
 import com.flipkart.constants.Status;
 import com.flipkart.exception.GradesNotGivenException;
 import com.flipkart.exception.InvalidCourseIdException;
@@ -46,199 +45,243 @@ public class StudentCrsMenu {
 	 * @param String student_id
 	 */
 	public void create_menu(String student_id) {
-		while(true) {
-			logger.info("\n----------Student Menu-----------");
-			logger.info("Press 1 to view all courses");
-			logger.info("Press 2 for course registration");
-			logger.info("Press 3 to add a course");
-			logger.info("Press 4 to drop a course");
-			logger.info("Press 5 to view registered courses");
-			logger.info("Press 6 to view grades (Report Card)");
-			logger.info("Press 7 to pay fees");
-			logger.info("Press 8 to Logout");
-			
-			int choice=io.input.nextInt();
-			io.input.nextLine();
-			switch(choice) {
-				case 1:
-					viewAllCourses();
-					break;
-				case 2:
-					registerCourses(student_id);
-					break;
-				case 3:
-					addCourse(student_id);
-					break;
-				case 4:
-					dropCourse(student_id);
-					break;
-				case 5: 
-					viewRegisteredCourses(student_id);
-					break;
-				case 6:
-					getGrades(student_id);
-					break;
-				case 7: 
-					payFees(student_id);
-					break;
-				case 8: 
-					logger.info("Logged Out Successfully!\n");
-					return;
+		try {
+			if(studentInterface.getVerificationStatus(student_id)) {
+				while(true) {
+					System.out.println("\n----------Student Menu-----------");
+					System.out.println("Press 1 to view all courses");
+					System.out.println("Press 2 for course registration");
+					System.out.println("Press 3 to add a course");
+					System.out.println("Press 4 to drop a course");
+					System.out.println("Press 5 to view registered courses");
+					System.out.println("Press 6 to view grades (Report Card)");
+					System.out.println("Press 7 to pay fees");
+					System.out.println("Press 8 to Logout");
 					
+					int choice=io.input.nextInt();
+					io.input.nextLine();
+					switch(choice) {
+						case 1:
+							viewAllCourses();
+							break;
+						case 2:
+							registerCourses(student_id);
+							break;
+						case 3:
+							addCourse(student_id);
+							break;
+						case 4:
+							dropCourse(student_id);
+							break;
+						case 5: 
+							viewRegisteredCourses(student_id);
+							break;
+						case 6:
+							getGrades(student_id);
+							break;
+						case 7: 
+							payFees(student_id);
+							break;
+						case 8: 
+							System.out.println("Logged Out Successfully!\n");
+							return;
+							
+					}
+				}
 			}
+			else {
+				System.out.println("Your profile verification is pending.");
+				System.out.println("Returning to main menu");
+			}
+		}catch(InvalidStudentIdException ex) {
+			logger.error("Invalid student id" + student_id);
 		}
+		return;
 	}
 	
 	private void registerCourses(String studentId) {
-		logger.info("\n----------Course Registration-----------");
-		logger.info("First provide the primary course choices,");
-		List<Course> primary = new ArrayList<Course>();
-		logger.info("Enter primary choice 1: ");
-		Course details = CourseUtils.getCourseDetails(io.input.nextLine());
-		primary.add(details);
-		logger.info("Enter primary choice 2: ");
-		details = CourseUtils.getCourseDetails(io.input.nextLine());
-		primary.add(details);
-		logger.info("Enter primary choice 3: ");
-		details = CourseUtils.getCourseDetails(io.input.nextLine());
-		primary.add(details);
-		logger.info("Enter primary choice 4: ");
-		details = CourseUtils.getCourseDetails(io.input.nextLine());
-		primary.add(details);
-		List<Course> secondary = new ArrayList<Course>();
-		logger.info("\nNow enter the secondary choices,");
-		logger.info("Enter secondary choice 1: ");
-		details = CourseUtils.getCourseDetails(io.input.nextLine());
-		secondary.add(details);
-		logger.info("Enter seondary choice 2: ");
-		details = CourseUtils.getCourseDetails(io.input.nextLine());
-		secondary.add(details);
-		CourseRegistration registration = new CourseRegistration((Course[]) primary.toArray(), (Course[]) secondary.toArray());
 		try {
+			System.out.println("\n----------Course Registration-----------");
+			System.out.println("First provide the primary course choices,");
+			List<Course> primary = new ArrayList<Course>();
+			System.out.println("Enter primary choice 1: ");
+			Course details = CourseUtils.getCourseDetails(io.input.nextLine());
+			primary.add(details);
+			System.out.println("Enter primary choice 2: ");
+			details = CourseUtils.getCourseDetails(io.input.nextLine());
+			primary.add(details);
+			System.out.println("Enter primary choice 3: ");
+			details = CourseUtils.getCourseDetails(io.input.nextLine());
+			primary.add(details);
+			System.out.println("Enter primary choice 4: ");
+			details = CourseUtils.getCourseDetails(io.input.nextLine());
+			primary.add(details);
+			List<Course> secondary = new ArrayList<Course>();
+			System.out.println("\nNow enter the secondary choices,");
+			System.out.println("Enter secondary choice 1: ");
+			details = CourseUtils.getCourseDetails(io.input.nextLine());
+			secondary.add(details);
+			System.out.println("Enter seondary choice 2: ");
+			details = CourseUtils.getCourseDetails(io.input.nextLine());
+			secondary.add(details);
+			CourseRegistration registration = new CourseRegistration(primary.toArray(new Course[0]), secondary.toArray(new Course[0]));
 			studentInterface.semesterRegistration(studentId, registration);
+			System.out.println("Successfully Completed registration");
 		}
 		catch(RegistrationFailureException ex) {
 			logger.error(ex.getException());
+		}catch(InvalidCourseIdException ex) {
+			logger.error("Invalid course id. Aborting registration.");
 		}
 	}
 	
 	private void viewAllCourses() {
-		logger.info("\n----------Displaying All Courses-----------");
+		System.out.println("\n----------Displaying All Courses-----------");
 		List<Course> courses = CourseUtils.getCourseList();
 		for(Course each:courses) {
-			logger.info("Course Id: " + each.getCourseId() + "  Course Name: " + each.getCourseName() + "  Instructor: " + each.getInstructor());
+			System.out.println("Course Id: " + each.getCourseId() + "  Course Name: " + each.getCourseName() + "  Instructor: " + each.getInstructor());
 		}
 	}
 	
 	private void getGrades(String student_id) {
-		logger.info("\n----------Report Card-----------");
+		System.out.println("\n----------Report Card-----------");
 		try {
 			ReportCard report = studentInterface.viewReportCard(student_id);
-			logger.info("Viewing grades:");
-			Hashtable<String, Grade> grades = report.getGrades();
+			System.out.println("Viewing grades:");
+			Hashtable<String, GradeConstants> grades = report.getGrades();
 			Enumeration<String> e = grades.keys();
 			while(e.hasMoreElements()) {
 				String courseID = e.nextElement();
-	            Grade grade = grades.get(courseID);
-	            logger.info("Course Id: " + courseID + "\t" + "Grade: " + grade.toString());
+	            GradeConstants grade = grades.get(courseID);
+	            System.out.println("Course Id: " + courseID + "\t" + "Grade: " + grade.toString());
 			}
 		}catch(GradesNotGivenException ex) {
-			logger.info("The grading of your courses is not complete yet.");
+			System.out.println("The grading of your courses is not complete yet.");
 		}catch(InvalidStudentIdException ex) {
-			logger.info("Invalid Id");
+			System.out.println("Invalid Id");
 		}
 	}
 
 	private void addCourse(String student_id) {
-		logger.info("\n----------Add Course-----------");
+		System.out.println("\n----------Add Course-----------");
 		try
 		{
-			logger.info("Enter Course Code");
+			System.out.println("Enter Course Code");
 			String courseCode = io.input.next();
 			if(studentInterface.addCourse(student_id,courseCode ) == Status.SUCCESS)
 			{
-				logger.info("Successfully Registered for course: "+courseCode+"\n");
+				System.out.println("Successfully Registered for course: "+courseCode+"\n");
 			}
 			else
 			{
-				logger.info("You have already registered for this course. Operation Failed \n");
+				System.out.println("You have already registered for this course. Operation Failed \n");
 			}
 		}
 		catch(InvalidCourseIdException | RegistrationFailureException ex)
 		{
-			logger.info(ex.getMessage());
+			System.out.println(ex.getMessage());
+		}	
+	}
+	
+	private boolean verifyCardNumber(String number) {
+		if (number.length() == 16) {
+			for(char each : number.toCharArray()) {
+				if(!Character.isDigit(each)) {
+					return false;
+				}
+			}
+			return true;
+		}else {
+			return false;
 		}
-		
 	}
 	
 	private void payFees(String student_id) {
-		logger.info("\n----------Displaying Registered Courses-----------");
-		logger.info("Select payment mode");
-		PaymentModes mode = PaymentModes.valueOf(io.input.nextLine());
-		logger.info("Enter amount");
+		System.out.println("\n----------Fee Payment-----------");
+		System.out.println("Select payment mode:");
+		System.out.println("press 1 for credit card");
+		System.out.println("press 2 for debit card");
+		System.out.println("press 3 for scholarship");
+		System.out.println("press 4 for upi");
+		int paymentMode = io.input.nextInt();
+		io.input.nextLine();
+		System.out.println("Enter amount");
 		String amt = io.input.nextLine();
 		String modeid = "";
 		Payment details = null;
-		if(mode == PaymentModes.CREDIT) {
-			logger.info("Enter the credit card number");
+		if(paymentMode == 1) {
+			System.out.println("Enter the credit card number");
 			modeid = io.input.nextLine();
-			details = new Credit(amt,Status.SUCCESS,modeid);
+			if(verifyCardNumber(modeid)) {
+				details = new Credit(amt,Status.SUCCESS,modeid);
+			}
+			else {
+				logger.error("Invalid credit card number! Aborting transaction.");
+				return;
+			}
 		}
-		else if(mode == PaymentModes.DEBIT) {
-			logger.info("Enter the debit card numbe");
+		else if(paymentMode == 2) {
+			System.out.println("Enter the debit card numbe");
 			modeid = io.input.nextLine();
-			details = new Debit(amt,Status.SUCCESS,modeid);
+			if(verifyCardNumber(modeid)) {
+				details = new Debit(amt,Status.SUCCESS,modeid);
+			}
+			else {
+				logger.error("Invalid debit card number! Aborting transaction.");
+				return;
+			}
 		}
-		else if(mode == PaymentModes.SCHOLARSHIP) {
-			logger.info("Enter the scholarship id");
+		else if(paymentMode == 3) {
+			System.out.println("Enter the scholarship id");
 			modeid = io.input.nextLine();
 			details = new Scholarship(amt,Status.SUCCESS,modeid);
 		}
-		else if(mode == PaymentModes.UPI) {
-			logger.info("Enter the upi id");
+		else if(paymentMode == 4) {
+			System.out.println("Enter the upi id");
 			modeid = io.input.nextLine();
 			details = new Upi(amt,Status.SUCCESS,modeid);
 		}
 		studentInterface.payFee(student_id, details);
+		System.out.println("Payment Notification: Payment Succeeded!");
 	}
 
 	private void viewRegisteredCourses(String student_id) {
-		logger.info("\n----------Displaying Registered Courses-----------");
+		System.out.println("\n----------Displaying Registered Courses-----------");
 		try {
 			List<Course> course_list= studentInterface.viewRegisteredCourses(student_id);
-			logger.info("Showing All Courses for student_id "+student_id);
-			course_list.forEach((key)->logger.info("Course ID : " + key.getCourseId()));
+			System.out.println("Showing All Courses for student id "+student_id);
+			course_list.forEach((key)->System.out.println("Course ID : " + key.getCourseId()));
 		}
 		catch(SQLException e) {
-			logger.info(e.getMessage());
+			System.out.println(e.getMessage());
 		}
 		
 	}
 
 	private void dropCourse(String student_id) {
-		logger.info("\n----------Drop Course-----------");
-		logger.info("Enter Course Code");
+		System.out.println("\n----------Drop Course-----------");
+		System.out.println("Enter Course Code");
 		String courseCode = io.input.next();
 		try
 		{
 			Status status=studentInterface.dropCourse(student_id, courseCode);
 			if(status.equals(Status.SUCCESS)) {
-				logger.info("Course Drop Successful");
+				System.out.println("Course Drop Successful");
 			}
 			else {
-				logger.info("You have not registered for this course");
+				System.out.println("You have not registered for this course");
 			}
 			
 			
 		}
 		catch(InvalidCourseIdException e)
 		{
-			logger.info(e.getMessage());
+			System.out.println(e.getMessage());
 		} 
 		catch (SQLException e) 
 		{
 
-			logger.info(e.getMessage());
+			System.out.println(e.getMessage());
 		}
 		
 	}

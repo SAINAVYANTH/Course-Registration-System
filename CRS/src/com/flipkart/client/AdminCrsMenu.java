@@ -6,11 +6,8 @@ package com.flipkart.client;
 import java.sql.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import com.flipkart.bean.Course;
 import com.flipkart.bean.Professor;
-import com.flipkart.bean.Student;
 import com.flipkart.exception.InvalidCourseIdException;
 import com.flipkart.exception.InvalidProfessorIdException;
 import com.flipkart.exception.InvalidStudentIdException;
@@ -24,20 +21,19 @@ import com.flipkart.utils.CourseUtils;
  *
  */
 public class AdminCrsMenu {
-	
-	private static Logger logger = Logger.getLogger(AdminCrsMenu.class);
+
 	private static IO io = IO.getInstance();
 	
 	public void AdminMenu() {
-		logger.info("\n----------Admin Menu-----------");
-		logger.info("Press 1 to view all courses");
-		logger.info("Press 2 to add course");
-		logger.info("Press 3 to remove course");
-		logger.info("Press 4 to add new professor");
-		logger.info("Press 5 to add new student");
-		logger.info("Press 6 to remove student");
-		logger.info("Press 7 to remove professor");
-		logger.info("Press 8 to exit");
+		System.out.println("\n----------Admin Menu-----------");
+		System.out.println("Press 1 to view all courses");
+		System.out.println("Press 2 to add course");
+		System.out.println("Press 3 to remove course");
+		System.out.println("Press 4 to add new professor");
+		System.out.println("Press 5 to verify a student registration");
+		System.out.println("Press 6 to remove student");
+		System.out.println("Press 7 to remove professor");
+		System.out.println("Press 8 to exit");
 		
 		adminchoice();
 	}
@@ -51,108 +47,100 @@ public class AdminCrsMenu {
 			io.input.nextLine();
 			if (n==1) {
 				List<Course> courses = CourseUtils.getCourseList();
-				logger.info("\n----------Displaying all courses-----------");
+				System.out.println("\n----------Displaying all courses-----------");
 				for(Course each:courses) {
-					logger.info("Course Id: " + each.getCourseId() + "  Course Name: " + each.getCourseName() + "  Instructor: " + each.getInstructor());
+					System.out.println("Course Id: " + each.getCourseId() + "  Course Name: " + each.getCourseName() + "  Instructor: " + each.getInstructor());
 				}
 			}
 			else if (n==2) {
-				logger.info("\n----------Add New Course-----------");
-				logger.info("Enter the course ID");
+				System.out.println("\n----------Add New Course-----------");
+				System.out.println("Enter the course ID");
 				String inp = io.input.nextLine();
 				course.setCourseId(inp);
-				logger.info("Enter the course name");
+				System.out.println("Enter the course name");
 				inp = io.input.nextLine();
 				course.setCourseName(inp);
 				course.setInstructor("Instructor NA");
 				admininterface.addCourse(course);
-				
+				System.out.println("Successfully added course");
 			}
 			else if (n==3) {
-				logger.info("\n----------Remove Course-----------");
-				logger.info("Enter the course ID");
+				System.out.println("\n----------Remove Course-----------");
+				System.out.println("Enter the course ID");
 				course.setCourseId(io.input.nextLine());
 				try {
 					admininterface.removeCourse(course.getCourseId());
+					System.out.println("Successfully removed course");
 				} catch (InvalidCourseIdException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					System.out.println("Invalid Course id. Returning to menu");
 				}
 			}
 			else if (n==4) {
-					logger.info("\n----------Add New Professor-----------");
+					System.out.println("\n----------Add New Professor-----------");
 					Professor professor = new Professor(null, null, null, null, null, null, null);
-					
-					logger.info("Enter the name");
+				
+					System.out.println("Enter the name");
 					professor.setName(io.input.nextLine());
-					logger.info("Enter the id");
+					System.out.println("Enter the id");
 					professor.setId(io.input.nextLine());
-					logger.info("Enter the dob");
+					System.out.println("Enter the dob");
 					io.input.nextLine();
 					professor.setDob(new Date(12,3,2000) );
-					logger.info("Enter the email");
+					System.out.println("Enter the email");
 					professor.setEmail(io.input.nextLine());
-					logger.info("Enter the address");
+					System.out.println("Enter the address");
 					professor.setAddress(io.input.nextLine());
-					logger.info("Enter the department");
+					System.out.println("Enter the department");
 					professor.setDepartment(io.input.nextLine());
-					logger.info("Enter the designation");
+					System.out.println("Enter the designation");
 					professor.setDesignation(io.input.nextLine());
-					logger.info(professor.getName());
+					System.out.println(professor.getName());
 					admininterface.addNewProfessor(professor);
+					System.out.println("Successfully added professor");
 			}
 			else if (n==5) {
-				logger.info("\n----------Add New Student-----------");
-				Student student = new Student(null, null, null, null, null, null, null, null);
-				
-				logger.info("Enter the name");
-				student.setName(io.input.nextLine());
-				logger.info("Enter the id");
-				student.setId(io.input.nextLine());
-				logger.info("Enter the dob");
-				student.setDob(new Date(12,3,2000));
-				logger.info("Enter the email");
-				student.setEmail(io.input.nextLine());
-				logger.info("Enter the address");
-				student.setAddress(io.input.nextLine());
-				logger.info("Enter the department");
-				student.setDepartment(io.input.nextLine());
-				logger.info("Enter the Roll number");
-				student.setRollNo(io.input.nextLine());
-				logger.info("Enter the year of joining");
-				student.setYearOfJoining(io.input.nextLine());
-				
-				admininterface.addNewStudent(student);
+				System.out.println("\n----------Verify Student Registration-----------");
+				System.out.println("Enter the student id");
+				String id = io.input.nextLine();
+				try {
+					admininterface.verifyStudentRegistration(id);
+					System.out.println("Successfully verified student profile");
+				}catch(InvalidStudentIdException ex) {
+					System.out.println("Invalid student id " + id + ". Returning to menu");
+				}
 			}
 				
 			else if (n==6) {
-				logger.info("\n----------Remove Student-----------");
-				logger.info("Enter the id");
+				System.out.println("\n----------Remove Student-----------");
+				System.out.println("Enter the id");
+				String id = io.input.nextLine();
 				try {
-					admininterface.removeStudent(io.input.nextLine());
+					admininterface.removeStudent(id);
+					System.out.println("Successfully removed student");
 				} catch (InvalidStudentIdException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					System.out.println("Invalid student id " + id + ". Returning to menu");
 				}
 			}
 			else if (n==7) {
-				logger.info("\n----------Remove Professor-----------");
-				logger.info("Enter the id");
+				System.out.println("\n----------Remove Professor-----------");
+				System.out.println("Enter the id");
+				String id = io.input.nextLine();
 				try {
-					admininterface.removeProfessor(io.input.nextLine());
+					admininterface.removeProfessor(id);
+					System.out.println("Successfully removed professor");
 				} catch (InvalidProfessorIdException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					System.out.println("Invalid professor id " + id + ". Returning to menu");
 				}
 			}
 			else if (n==8) {
-				return;
+				break;
 			}
 			else {
-				logger.info("Please enter a valid choice. Reurning to main menu.");
+				System.out.println("Please enter a valid choice. Returning to main menu.");
 			}
-				
 			AdminMenu();
 		}while(n!=8);
+		System.out.println("Loggin out! Returning to the main menu.");
+		return;
 	}
 }

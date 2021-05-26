@@ -29,7 +29,7 @@ public class SQLQueries {
 	//*******CREDENTIALS DAO*******//
 	public static final String SAVE_CREDENTIALS = "insert into credentials values(?,?,?)";
 	public static final String VERIFY_CREDENTIALS ="select * from credentials where username=?";
-	public static final String UPDATE_CREDENTIALS ="update credentials set password=? where userid=?";
+	public static final String UPDATE_CREDENTIALS ="update credentials set password=? where username=?";
 	
 	//*******PROFESSOR DAO********//
 	public static final String ADD_PROFESSOR ="insert into professors values(?,?,?,?,?,?,?)";
@@ -50,4 +50,6 @@ public class SQLQueries {
 	public static final String ADD_STUDENT ="insert into students values(?,?,?,?,?,?,?,?,?)";
 	public static final String GET_STUDENT_DETAILS ="select * from students where id=?";
 	public static final String DEL_STUDENT ="delete from students where id = ?";
+	public static final String CH_STUDENT_VERIFICATION = "update students set verified=? where id=?";
+	public static final String GET_STUDENT_VERIFICATION = "select verified from students where id=?";
 }

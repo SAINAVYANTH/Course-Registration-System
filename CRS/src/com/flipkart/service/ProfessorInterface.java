@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.flipkart.bean.Course;
 import com.flipkart.bean.Student;
-import com.flipkart.constants.Grade;
+import com.flipkart.constants.GradeConstants;
 import com.flipkart.constants.Status;
 import com.flipkart.exception.InvalidCourseIdException;
 import com.flipkart.exception.InvalidGradeException;
@@ -38,5 +38,5 @@ public interface ProfessorInterface {
 	 * @param Professor id, Course Id, HashTable of StudentId and Grade given
 	 * @exception InvalidGradeException
 	 */
-	public void giveGrades(String id, String courseId, Hashtable<String, Grade> grades) throws InvalidGradeException;
+	public void giveGrades(String id, String courseId, Hashtable<String, GradeConstants> grades) throws InvalidGradeException;
 }

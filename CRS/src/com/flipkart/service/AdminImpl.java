@@ -2,7 +2,6 @@ package com.flipkart.service;
 
 import com.flipkart.bean.Course;
 import com.flipkart.bean.Professor;
-import com.flipkart.bean.Student;
 import com.flipkart.dao.CourseDao;
 import com.flipkart.dao.CourseDaoInterface;
 import com.flipkart.dao.ProfessorDao;
@@ -46,12 +45,6 @@ public class AdminImpl implements AdminInterface{
 	}
 
 	@Override
-	public void addNewStudent(Student details) {
-		StudentDaoInterface studentDao = StudentDao.getInstance();
-		studentDao.addStudent(details);
-	}
-
-	@Override
 	public void removeStudent(String id) throws InvalidStudentIdException{
 		StudentDaoInterface studentDao = StudentDao.getInstance();
 		studentDao.deleteStudent(id);
@@ -67,6 +60,12 @@ public class AdminImpl implements AdminInterface{
 	public void generateReportCard(String studentId) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void verifyStudentRegistration(String studentId) throws InvalidStudentIdException {
+		StudentDaoInterface studentDao = StudentDao.getInstance();
+		studentDao.changeStudentVerificationStatus(studentId);
 	}
 	
 }

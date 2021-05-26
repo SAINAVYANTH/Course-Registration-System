@@ -2,8 +2,6 @@ package com.flipkart.client;
 
 import java.sql.Date;
 
-import org.apache.log4j.Logger;
-
 import com.flipkart.bean.Student;
 import com.flipkart.bean.UserLogin;
 import com.flipkart.utils.LoginUtils;
@@ -11,12 +9,11 @@ import com.flipkart.client.ProfessorCrsMenu;
 import com.flipkart.constants.Status;
 import com.flipkart.constants.UserRole;
 import com.flipkart.input.IO;
-import com.flipkart.service.AdminImpl;
-import com.flipkart.service.AdminInterface;
+import com.flipkart.service.StudentImpl;
+import com.flipkart.service.StudentInterface;
 
 public class CrsApplication {
 	
-	private static Logger logger = Logger.getLogger(CrsApplication.class);
 	private static IO io = IO.getInstance();
 	
 	public static void main(String[] args) {
@@ -36,37 +33,40 @@ public class CrsApplication {
 			else if (n==3) {
 				client.updatepassword();
 			}
-			else if (n==4)
+			else if (n==4) {
 				break;
+			}
 			client.MainMenu();
 		}while(n!=3);
 		io.input.close();
+		System.out.println("Thanks you for using the CRS!");
 	}
 	
 	private void login() {
-		logger.info("\n----------Login-----------");
-		logger.info("Enter user ID");
+		System.out.println("\n----------Login-----------");
+		System.out.println("Enter user ID");
 		String userid = io.input.nextLine();
 		
-		logger.info("Enter your password");
+		System.out.println("Enter your password");
 		String userpass = io.input.nextLine();
 		
 		UserLogin user = LoginUtils.Login(userid,userpass); 
 		if (user.getUserId().length()==0) {
-			logger.info("username or password is incorrect");
+			System.out.println("username or password is incorrect");
 			MainMenu();
 		}
 		else {
 			UserRole role = user.getRole();
+			System.out.println("Login success! role : " + role.toString());
 			if(role.equals(UserRole.STUDENT)) {
 				StudentCrsMenu smc= new StudentCrsMenu();
 				smc.create_menu(user.getUserId());
 			}
-			if(role.equals(UserRole.PROFESSOR)) {
+			else if(role.equals(UserRole.PROFESSOR)) {
 				ProfessorCrsMenu clientprof = new ProfessorCrsMenu(user.getUserId());
 				clientprof.ProfMenu();
 			}
-			if(role.equals(UserRole.ADMIN)) {
+			else if(role.equals(UserRole.ADMIN)) {
 				AdminCrsMenu clientadmin = new AdminCrsMenu();
 				clientadmin.AdminMenu();
 
@@ -75,26 +75,26 @@ public class CrsApplication {
 	}
 		
 	private void updatepassword() {
-		logger.info("\n----------Password update-----------");
-		logger.info("Enter user ID");
+		System.out.println("\n----------Password update-----------");
+		System.out.println("Enter user ID");
 		String userid = io.input.nextLine();
 		
-		logger.info("Enter your old new password");
+		System.out.println("Enter your old new password");
 		String userpass = io.input.nextLine();
 		if(LoginUtils.Login(userid,userpass).getUserId().length()!=0){
 			String userpass1,userpass2;
 			do {
-				logger.info("Enter your new password");
+				System.out.println("Enter your new password");
 				userpass1 = io.input.nextLine();
 				
-				logger.info("Confirm your new password");
+				System.out.println("Confirm your new password");
 				userpass2 = io.input.nextLine();
 				
 			}while(userpass1.equals(userpass2)==false || (userpass1.length()==0));
 			
 			userpass=userpass1;
 			if( LoginUtils.updatePassword(userid,userpass) == Status.SUCCESS){
-				logger.info("Successfully updated Passeword");
+				System.out.println("Successfully updated Passeword");
 			}
 			MainMenu();
 		}
@@ -103,36 +103,39 @@ public class CrsApplication {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void registerNew() {
-		AdminInterface admininterface = AdminImpl.getInstance();
-		logger.info("\n----------New Student Registration-----------");
+		StudentInterface studentinterface = StudentImpl.getInstance();
+		System.out.println("\n----------New Student Registration-----------");
 		Student student = new Student(null, null, null, null, null, null, null, null);
 		
-		logger.info("Enter the name");
+		System.out.println("Enter the name");
 		student.setName(io.input.nextLine());
-		logger.info("Enter the id");
+		System.out.println("Enter the id");
 		student.setId(io.input.nextLine());
-		logger.info("Enter the dob");
+		System.out.println("Enter the dob");
+		io.input.nextLine();
 		student.setDob(new Date(12,3,2000));
-		logger.info("Enter the email");
+		System.out.println("Enter the email");
 		student.setEmail(io.input.nextLine());
-		logger.info("Enter the address");
+		System.out.println("Enter the address");
 		student.setAddress(io.input.nextLine());
-		logger.info("Enter the department");
+		System.out.println("Enter the department");
 		student.setDepartment(io.input.nextLine());
-		logger.info("Enter the Roll number");
+		System.out.println("Enter the Roll number");
 		student.setRollNo(io.input.nextLine());
-		logger.info("Enter the year of joining");
+		System.out.println("Enter the year of joining");
 		student.setYearOfJoining(io.input.nextLine());
 		
-		admininterface.addNewStudent(student);
+		studentinterface.addNewStudent(student);
+		System.out.println("Successfully registered! Verification Pending!");
 	}
 	
 	public void MainMenu() {
-		logger.info("\n----------Welcome! CRS Main Menu-----------");
-		logger.info("Press 1 to login");
-		logger.info("Press 2 for new student registration");
-		logger.info("Press 3 to Update Passsword");
-		logger.info("Press 4 to Exit ");
+		System.out.println("\n----------Welcome! CRS Main Menu-----------");
+		System.out.println("Press 1 to login");
+		System.out.println("Press 2 for new student registration");
+		System.out.println("Press 3 to Update Passsword");
+		System.out.println("Press 4 to Exit ");
 	}
 }

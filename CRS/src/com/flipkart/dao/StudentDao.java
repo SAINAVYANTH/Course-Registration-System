@@ -113,4 +113,54 @@ public class StudentDao implements StudentDaoInterface {
 		}
 	    throw new InvalidStudentIdException("Invalid student id " + studentID);
 	}
+
+	@Override
+	public Status changeStudentVerificationStatus(String studentId) throws InvalidStudentIdException {
+		Connection conn = null;
+		PreparedStatement prep_stmt = null;
+		try {
+			conn = DBUtils.getConnection();
+			String raw_stmt = SQLQueries.CH_STUDENT_VERIFICATION;
+			prep_stmt = conn.prepareStatement(raw_stmt);
+			prep_stmt.setString(1, Boolean.toString(true));
+			prep_stmt.setString(2, studentId);
+			prep_stmt.executeUpdate();
+			return Status.SUCCESS;
+		}catch(SQLException se){
+			se.printStackTrace();
+		}catch(Exception e){
+		    e.printStackTrace();
+		}finally{
+			try{
+		    	if(prep_stmt!=null)
+		            prep_stmt.close();
+		    }catch(SQLException se2){}
+		}
+		return Status.FAIL;
+	}
+
+	@Override
+	public boolean getVerificationStatus(String studentId) throws InvalidStudentIdException {
+		Connection conn = null;
+		PreparedStatement prep_stmt = null;
+		try {
+			conn = DBUtils.getConnection();
+			String raw_stmt = SQLQueries.GET_STUDENT_VERIFICATION;
+			prep_stmt = conn.prepareStatement(raw_stmt);
+			prep_stmt.setString(1, studentId);
+			ResultSet result =  prep_stmt.executeQuery();
+			result.absolute(1);
+			return Boolean.parseBoolean(result.getString(1));
+		}catch(SQLException se){
+			se.printStackTrace();
+		}catch(Exception e){
+		    e.printStackTrace();
+		}finally{
+			try{
+		    	if(prep_stmt!=null)
+		            prep_stmt.close();
+		    }catch(SQLException se2){}
+		}
+		throw new InvalidStudentIdException("Invalid student id " + studentId);
+	}
 }

@@ -1,6 +1,6 @@
 package com.flipkart.constants;
 
-public enum Grade {
+public enum GradeConstants {
 	A1, 
 	A2,  
 	B1, 
