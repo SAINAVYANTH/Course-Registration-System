@@ -28,24 +28,43 @@ public class ProfessorImpl implements ProfessorInterface{
 		return instance;
 	}
 
+	/**
+	 * Function to link professor to course
+	 * @param Professor id, Course id
+	 * @return Status (Success/ Fail)
+	 */
 	@Override
 	public Status teachCourse(String id, String courseId) {
 		CourseDaoInterface courseDao = CourseDao.getInstance();
 		return courseDao.updateCourseDetails(id, courseId);
 	}
-
+	/**
+	 * Function to view courses a professor is teaching
+	 * @param Professor id
+	 * @return List of courses professor is teaching
+	 */
 	@Override
 	public List<Course> viewTeachingCourses(String id) {
 		CourseDaoInterface courseDao = CourseDao.getInstance();
 		return courseDao.getTeachingCourse(id);
 	}
 
+	/**
+	 * Function to view enrolled students for a course
+	 * @param Course Id
+	 * @return List of students enrolled in the course
+	 * @exception InvalidCourseException
+	 */
 	@Override
 	public List<Student> viewEnrolledStudents(String id, String courseId) throws InvalidCourseIdException {
 		RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
 		return registrationDao.viewEnrolledStudents(courseId);
 	}
-
+	/**
+	 * Function to give grades to students
+	 * @param Professor id, Course Id, HashTable of StudentId and Grade given
+	 * @exception InvalidGradeException
+	 */
 	@Override
 	public void giveGrades(String id, String courseId, Hashtable<String, Grade> grades) throws InvalidGradeException {
 		RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
