@@ -4,15 +4,19 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import com.flipkart.bean.Credit;
 import com.flipkart.bean.Debit;
 import com.flipkart.bean.Payment;
 import com.flipkart.bean.Scholarship;
 import com.flipkart.bean.Upi;
-import com.flipkart.constants.Status;
+import com.flipkart.constants.StatusConstants;
 import com.flipkart.utils.DBUtils;
 
 public class PaymentsDao implements PaymentsDaoInterface{
+	
+	private static Logger logger = Logger.getLogger(PaymentsDao.class);
 	private static volatile PaymentsDao instance = null;
 	
 	private PaymentsDao() {};
@@ -27,7 +31,7 @@ public class PaymentsDao implements PaymentsDaoInterface{
 	}
 
 	@Override
-	public Status addTransaction(String studentId, Payment details) {
+	public StatusConstants addTransaction(String studentId, Payment details) {
 		Connection conn = null;
 		PreparedStatement prep_stmt = null;
 		try {
@@ -52,18 +56,20 @@ public class PaymentsDao implements PaymentsDaoInterface{
 				prep_stmt.setString(5, ((Upi) details).getUpiId());
 			}
 			prep_stmt.executeUpdate();
-			return Status.SUCCESS;
+			return StatusConstants.SUCCESS;
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
-		return Status.FAIL;
+		return StatusConstants.FAIL;
 	}
 	
 }

@@ -3,7 +3,7 @@ package com.flipkart.dao;
 import java.util.List;
 
 import com.flipkart.bean.Course;
-import com.flipkart.constants.Status;
+import com.flipkart.constants.StatusConstants;
 import com.flipkart.exception.InvalidCourseIdException;
 
 public interface CourseDaoInterface {
@@ -11,7 +11,7 @@ public interface CourseDaoInterface {
 	/** Dao Function to add a new course
 	 * @params Course details
 	 * */
-	public Status addNewCourse(Course details);
+	public StatusConstants addNewCourse(Course details);
 	
 	/** Dao Function to fetch course details
 	 * @param String course id
@@ -27,12 +27,12 @@ public interface CourseDaoInterface {
 	 * @param String course id
 	 * @throws InvalidCourseIdException
 	 * */
-	public Status removeCourse(String courseId) throws InvalidCourseIdException;
+	public StatusConstants removeCourse(String courseId) throws InvalidCourseIdException;
 	
 	/** Dao Function to update the details of a course
 	 * @params String course id
 	 * */
-	public Status updateCourseDetails(String id, String courseId);
+	public StatusConstants updateCourseDetails(String id, String courseId);
 	
 	/** Dao Function to get courses being taught by a professor
 	 * @param String professor id

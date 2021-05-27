@@ -57,10 +57,7 @@ public class AdminImpl implements AdminInterface{
 	}
 
 	@Override
-	public void generateReportCard(String studentId) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void generateReportCard(String studentId) {}
 
 	@Override
 	public void verifyStudentRegistration(String studentId) throws InvalidStudentIdException {

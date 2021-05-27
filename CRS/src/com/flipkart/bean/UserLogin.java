@@ -1,10 +1,10 @@
 package com.flipkart.bean;
 
-import com.flipkart.constants.UserRole;
+import com.flipkart.constants.UserRoleConstants;
 
 public class UserLogin {
 	
-	public UserLogin(String userId, String password, UserRole role) {
+	public UserLogin(String userId, String password, UserRoleConstants role) {
 		this.userId = userId;
 		this.password = password;
 		this.role = role;
@@ -12,7 +12,7 @@ public class UserLogin {
 	
 	private String userId;
 	private String password;
-	private UserRole role;
+	private UserRoleConstants role;
 	
 	public String getUserId() {
 		return userId;
@@ -26,10 +26,10 @@ public class UserLogin {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public UserRole getRole() {
+	public UserRoleConstants getRole() {
 		return role;
 	}
-	public void setRole(UserRole role) {
+	public void setRole(UserRoleConstants role) {
 		this.role = role;
 	}
 }

@@ -6,8 +6,8 @@ import com.flipkart.bean.Student;
 import com.flipkart.bean.UserLogin;
 import com.flipkart.utils.LoginUtils;
 import com.flipkart.client.ProfessorCrsMenu;
-import com.flipkart.constants.Status;
-import com.flipkart.constants.UserRole;
+import com.flipkart.constants.StatusConstants;
+import com.flipkart.constants.UserRoleConstants;
 import com.flipkart.input.IO;
 import com.flipkart.service.StudentImpl;
 import com.flipkart.service.StudentInterface;
@@ -53,20 +53,19 @@ public class CrsApplication {
 		UserLogin user = LoginUtils.Login(userid,userpass); 
 		if (user.getUserId().length()==0) {
 			System.out.println("username or password is incorrect");
-			MainMenu();
 		}
 		else {
-			UserRole role = user.getRole();
+			UserRoleConstants role = user.getRole();
 			System.out.println("Login success! role : " + role.toString());
-			if(role.equals(UserRole.STUDENT)) {
+			if(role.equals(UserRoleConstants.STUDENT)) {
 				StudentCrsMenu smc= new StudentCrsMenu();
 				smc.create_menu(user.getUserId());
 			}
-			else if(role.equals(UserRole.PROFESSOR)) {
+			else if(role.equals(UserRoleConstants.PROFESSOR)) {
 				ProfessorCrsMenu clientprof = new ProfessorCrsMenu(user.getUserId());
 				clientprof.ProfMenu();
 			}
-			else if(role.equals(UserRole.ADMIN)) {
+			else if(role.equals(UserRoleConstants.ADMIN)) {
 				AdminCrsMenu clientadmin = new AdminCrsMenu();
 				clientadmin.AdminMenu();
 
@@ -93,7 +92,7 @@ public class CrsApplication {
 			}while(userpass1.equals(userpass2)==false || (userpass1.length()==0));
 			
 			userpass=userpass1;
-			if( LoginUtils.updatePassword(userid,userpass) == Status.SUCCESS){
+			if( LoginUtils.updatePassword(userid,userpass) == StatusConstants.SUCCESS){
 				System.out.println("Successfully updated Passeword");
 			}
 			MainMenu();

@@ -1,16 +1,16 @@
 package com.flipkart.bean;
 
-import com.flipkart.constants.Status;
+import com.flipkart.constants.StatusConstants;
 
 import java.util.Date;
 import java.util.UUID;
 
-import com.flipkart.constants.PaymentModes;
+import com.flipkart.constants.PaymentModeConstants;
 
 public class Payment {
 	
 	@SuppressWarnings("deprecation")
-	public Payment( PaymentModes paymentMode, String amount, Status status) {
+	public Payment( PaymentModeConstants paymentMode, String amount, StatusConstants status) {
 		super();
 		this.transactionId = UUID.randomUUID().toString();
 		this.paymentMode = paymentMode;
@@ -20,10 +20,10 @@ public class Payment {
 	}
 	
 	private String transactionId;
-	private PaymentModes paymentMode;
+	private PaymentModeConstants paymentMode;
 	private String amount;
 	private String timestamp;
-	private Status status;
+	private StatusConstants status;
 	
 	public String getTransactionId() {
 		return transactionId;
@@ -31,10 +31,10 @@ public class Payment {
 	public void setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
 	}
-	public PaymentModes getPaymentMode() {
+	public PaymentModeConstants getPaymentMode() {
 		return paymentMode;
 	}
-	public void setPaymentMode(PaymentModes paymentMode) {
+	public void setPaymentMode(PaymentModeConstants paymentMode) {
 		this.paymentMode = paymentMode;
 	}
 	public String getAmount() {
@@ -49,10 +49,10 @@ public class Payment {
 	public void setTimestamp(String timestamp) {
 		this.timestamp = timestamp;
 	}
-	public Status getStatus() {
+	public StatusConstants getStatus() {
 		return status;
 	}
-	public void setStatus(Status status) {
+	public void setStatus(StatusConstants status) {
 		this.status = status;
 	}
 }

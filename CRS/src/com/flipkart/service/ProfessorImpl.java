@@ -6,7 +6,7 @@ import java.util.List;
 import com.flipkart.bean.Course;
 import com.flipkart.bean.Student;
 import com.flipkart.constants.GradeConstants;
-import com.flipkart.constants.Status;
+import com.flipkart.constants.StatusConstants;
 import com.flipkart.dao.CourseDao;
 import com.flipkart.dao.CourseDaoInterface;
 import com.flipkart.dao.RegistrationDao;
@@ -34,7 +34,7 @@ public class ProfessorImpl implements ProfessorInterface{
 	 * @return Status (Success/ Fail)
 	 */
 	@Override
-	public Status teachCourse(String id, String courseId) {
+	public StatusConstants teachCourse(String id, String courseId) {
 		CourseDaoInterface courseDao = CourseDao.getInstance();
 		return courseDao.updateCourseDetails(id, courseId);
 	}

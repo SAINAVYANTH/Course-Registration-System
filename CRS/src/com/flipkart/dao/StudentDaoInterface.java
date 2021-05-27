@@ -1,7 +1,7 @@
 package com.flipkart.dao;
 
 import com.flipkart.bean.Student;
-import com.flipkart.constants.Status;
+import com.flipkart.constants.StatusConstants;
 import com.flipkart.exception.InvalidStudentIdException;
 
 public interface StudentDaoInterface {
@@ -16,18 +16,18 @@ public interface StudentDaoInterface {
 	 * @param String student id
 	 * @throws InvalidStudentIdException
 	 * */
-	public Status deleteStudent(String studentID) throws InvalidStudentIdException;
+	public StatusConstants deleteStudent(String studentID) throws InvalidStudentIdException;
 	
 	/** Dao Function to add student details
 	 * @param Student student
 	 * */
-	public Status addStudent(Student student);
+	public StatusConstants addStudent(Student student);
 	
 	/** Dao Function to change student verification status
 	 * @param String student id
 	 * @throws InvalidStudentIdException
 	 * */
-	public Status changeStudentVerificationStatus(String studentId) throws InvalidStudentIdException;
+	public StatusConstants changeStudentVerificationStatus(String studentId) throws InvalidStudentIdException;
 	
 	/** Dao Function to get verification status of a student
 	 * @param String student id

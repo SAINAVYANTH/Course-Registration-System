@@ -9,15 +9,19 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.flipkart.bean.Course;
 import com.flipkart.bean.Student;
 import com.flipkart.constants.GradeConstants;
-import com.flipkart.constants.SQLQueries;
-import com.flipkart.constants.Status;
+import com.flipkart.constants.SQLQueryConstants;
+import com.flipkart.constants.StatusConstants;
 import com.flipkart.exception.InvalidStudentIdException;
 import com.flipkart.utils.DBUtils;
 
 public class RegistrationDao implements RegistrationDaoInterface{
+	
+	private static Logger logger = Logger.getLogger(RegistrationDao.class);
 	private static volatile RegistrationDao instance = null;
 	
 	public static RegistrationDao getInstance() {
@@ -29,53 +33,57 @@ public class RegistrationDao implements RegistrationDaoInterface{
 		return instance;	
 	}
 
-	public Status saveNewRegistration(String courseId, String studentId) {
+	public StatusConstants saveNewRegistration(String courseId, String studentId) {
 		Connection conn = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.SAVE_NEW_REG;
+			String raw_stmt = SQLQueryConstants.SAVE_NEW_REG;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, courseId);
 			prep_stmt.setString(2, studentId);
 			prep_stmt.setString(3, GradeConstants.NOT_GRADED.toString());
 			prep_stmt.executeUpdate();
-			return Status.SUCCESS;
+			return StatusConstants.SUCCESS;
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
-		return Status.FAIL;
+		return StatusConstants.FAIL;
 	}
 	
-	public Status removeRegistration(String courseId, String studentId) {
+	public StatusConstants removeRegistration(String courseId, String studentId) {
 		Connection conn = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.DROP_COURSE;
+			String raw_stmt = SQLQueryConstants.DROP_COURSE;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, courseId);
 			prep_stmt.setString(2, studentId);
 			prep_stmt.executeUpdate();
-			return Status.SUCCESS;
+			return StatusConstants.SUCCESS;
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
-		return Status.FAIL;
+		return StatusConstants.FAIL;
 	}
 	
 	public Hashtable<String,GradeConstants> getGrades(String studentId) throws InvalidStudentIdException{
@@ -83,7 +91,7 @@ public class RegistrationDao implements RegistrationDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.GET_GRADES;
+			String raw_stmt = SQLQueryConstants.GET_GRADES;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, studentId);
 			ResultSet result = prep_stmt.executeQuery();
@@ -93,24 +101,26 @@ public class RegistrationDao implements RegistrationDaoInterface{
 			}
 			return grades;
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
 		throw new InvalidStudentIdException("Invalid student id " + studentId);
 	}
 	
-	public Status addGrade(String courseID, Hashtable<String, GradeConstants> ht){
+	public StatusConstants addGrade(String courseID, Hashtable<String, GradeConstants> ht){
 		Connection conn = null;
 		PreparedStatement prep_stmt = null;
 	    try {
 	        conn = DBUtils.getConnection();
-	        PreparedStatement stmt = conn.prepareStatement(SQLQueries.ADD_GRADE);
+	        PreparedStatement stmt = conn.prepareStatement(SQLQueryConstants.ADD_GRADE);
 	        Enumeration<String> e = ht.keys();
 	        while(e.hasMoreElements()) {
 	            String studentID = e.nextElement();
@@ -122,18 +132,20 @@ public class RegistrationDao implements RegistrationDaoInterface{
 
 	            stmt.executeUpdate();
 	        }
-	        return Status.SUCCESS;
+	        return StatusConstants.SUCCESS;
 	    }catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
-	    return Status.FAIL;
+	    return StatusConstants.FAIL;
 	}
 
 	@Override
@@ -142,21 +154,23 @@ public class RegistrationDao implements RegistrationDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.GET_STUDENT_CNT;
+			String raw_stmt = SQLQueryConstants.GET_STUDENT_CNT;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, courseId);
 			ResultSet result = prep_stmt.executeQuery();
 			result.absolute(1);
 			return result.getInt(1);
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
 		return 0;
 	}
@@ -166,7 +180,7 @@ public class RegistrationDao implements RegistrationDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.VIEW_ENROLL_STUDENTS;
+			String raw_stmt = SQLQueryConstants.VIEW_ENROLL_STUDENTS;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, courseId);
 			ResultSet result = prep_stmt.executeQuery();
@@ -179,14 +193,16 @@ public class RegistrationDao implements RegistrationDaoInterface{
 			}
 			return students;
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
 		return new ArrayList<Student>();
 	}
@@ -197,7 +213,7 @@ public class RegistrationDao implements RegistrationDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.VIEW_REGIS_COURSES;
+			String raw_stmt = SQLQueryConstants.VIEW_REGIS_COURSES;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, studentId);
 			ResultSet result = prep_stmt.executeQuery();
@@ -210,39 +226,43 @@ public class RegistrationDao implements RegistrationDaoInterface{
 			}
 			return courses;
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
 		return new ArrayList<Course>();
 	}
 
 	@Override
-	public Status clearStudentCourses(String studentId) {
+	public StatusConstants clearStudentCourses(String studentId) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			stmt = conn.prepareStatement(SQLQueries.CLEAR_STUDENT_COURSES);
+			stmt = conn.prepareStatement(SQLQueryConstants.CLEAR_STUDENT_COURSES);
 	        stmt.setString(1, studentId.toString());
 	        stmt.executeUpdate();
-	        return Status.SUCCESS;
+	        return StatusConstants.SUCCESS;
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(stmt!=null)
 		            stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
-		return Status.FAIL;
+		return StatusConstants.FAIL;
 	}
 	
 	

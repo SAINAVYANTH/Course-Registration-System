@@ -6,16 +6,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import com.flipkart.bean.Admin;
 import com.flipkart.bean.UserLogin;
-import com.flipkart.constants.SQLQueries;
-import com.flipkart.constants.Status;
-import com.flipkart.constants.UserRole;
+import com.flipkart.constants.SQLQueryConstants;
+import com.flipkart.constants.StatusConstants;
+import com.flipkart.constants.UserRoleConstants;
 import com.flipkart.exception.InvalidAdminIdException;
 import com.flipkart.utils.DBUtils;
 
 public class AdminDao implements AdminDaoInterface{
 	
+	private static Logger logger = Logger.getLogger(AdminDao.class);
 	private static volatile AdminDao instance = null;
 	
 	private AdminDao() {};
@@ -29,12 +32,12 @@ public class AdminDao implements AdminDaoInterface{
 		return instance;
 	}
 	
-	public Status saveAdminDetails(Admin details) {
+	public StatusConstants saveAdminDetails(Admin details) {
 		Connection conn = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.SAVE_ADMIN;
+			String raw_stmt = SQLQueryConstants.SAVE_ADMIN;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, details.getId());
 			prep_stmt.setString(2, details.getName());
@@ -43,19 +46,21 @@ public class AdminDao implements AdminDaoInterface{
 			prep_stmt.setString(5, details.getAddress());
 			prep_stmt.executeUpdate();
 			CredentialsDaoInterface credentialsDao = CredentialsDao.getInstance();
-			credentialsDao.saveCredentials(new UserLogin(details.getId(), details.getId(), UserRole.ADMIN));
-			return Status.SUCCESS;
+			credentialsDao.saveCredentials(new UserLogin(details.getId(), details.getId(), UserRoleConstants.ADMIN));
+			return StatusConstants.SUCCESS;
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
-		return Status.FAIL;
+		return StatusConstants.FAIL;
 	}
 	
 	public Admin getAdminDetails(String id) throws InvalidAdminIdException{
@@ -63,7 +68,7 @@ public class AdminDao implements AdminDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.GET_ADMIN;
+			String raw_stmt = SQLQueryConstants.GET_ADMIN;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, id);
 			ResultSet result =  prep_stmt.executeQuery();
@@ -71,14 +76,16 @@ public class AdminDao implements AdminDaoInterface{
 			return new Admin(result.getString(1), result.getString(2), result.getDate(3), result.getString(4), 
 					result.getString(5));
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
 		throw new InvalidAdminIdException("Invalid id " + id);
 	}

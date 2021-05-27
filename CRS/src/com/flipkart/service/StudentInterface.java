@@ -8,7 +8,7 @@ import com.flipkart.bean.CourseRegistration;
 import com.flipkart.bean.Payment;
 import com.flipkart.bean.ReportCard;
 import com.flipkart.bean.Student;
-import com.flipkart.constants.Status;
+import com.flipkart.constants.StatusConstants;
 import com.flipkart.exception.GradesNotGivenException;
 import com.flipkart.exception.InvalidCourseIdException;
 import com.flipkart.exception.InvalidGradeException;
@@ -23,21 +23,21 @@ public interface StudentInterface {
 	 * @param Professor id, Course Id, HashTable of StudentId and Grade given
 	 * @exception InvalidGradeException
 	 */
-	public Status semesterRegistration(String studentId, CourseRegistration courses) throws RegistrationFailureException;
+	public StatusConstants semesterRegistration(String studentId, CourseRegistration courses) throws RegistrationFailureException;
 	
 	/**
 	 * Function to register a student for a course
 	 * @param Student Id, Course Id
 	 * @exception InvalidCourseIdException, RegistrationFailureException
 	 */
-	public Status addCourse(String studentId, String courseId) throws InvalidCourseIdException, RegistrationFailureException;
+	public StatusConstants addCourse(String studentId, String courseId) throws InvalidCourseIdException, RegistrationFailureException;
 	
 	/**
 	 * Function to drop course as a student
 	 * @param Student ID, course Id
 	 * @exception InvalidCourseIdException, SQLException
 	 */
-	public Status dropCourse(String studentId, String courseId) throws InvalidCourseIdException, SQLException ;
+	public StatusConstants dropCourse(String studentId, String courseId) throws InvalidCourseIdException, SQLException ;
 	
 	/**
 	 * Function to view registered courses by student
@@ -57,7 +57,7 @@ public interface StudentInterface {
 	 * Function to pay fees as a student
 	 * @param Student Id, Payment Details
 	 */
-	public Status payFee(String studentId,Payment details);
+	public StatusConstants payFee(String studentId,Payment details);
 	
 	/** Function to add a new Student to the database
 	 * @param Student details

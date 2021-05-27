@@ -14,7 +14,7 @@ import com.flipkart.bean.Payment;
 import com.flipkart.bean.ReportCard;
 import com.flipkart.bean.Student;
 import com.flipkart.constants.GradeConstants;
-import com.flipkart.constants.Status;
+import com.flipkart.constants.StatusConstants;
 import com.flipkart.dao.PaymentsDao;
 import com.flipkart.dao.PaymentsDaoInterface;
 import com.flipkart.dao.RegistrationDao;
@@ -49,13 +49,13 @@ public class StudentImpl implements StudentInterface {
 	StudentDaoInterface studentDaoInterface = StudentDao.getInstance();
 
 	@Override
-	public Status semesterRegistration(String studentId, CourseRegistration courses) throws RegistrationFailureException {
+	public StatusConstants semesterRegistration(String studentId, CourseRegistration courses) throws RegistrationFailureException {
 		Course[] primary = courses.getPrimaryCourses();
 		Course[] secondary = courses.getSecondaryCourses();
 		int successes = 0;
 		for(Course each : primary) {
 			try {
-				if(addCourse(studentId, each.getCourseId()) == Status.SUCCESS) {
+				if(addCourse(studentId, each.getCourseId()) == StatusConstants.SUCCESS) {
 					successes = successes + 1;
 				}
 			}catch (InvalidCourseIdException | RegistrationFailureException ex) {}
@@ -64,7 +64,7 @@ public class StudentImpl implements StudentInterface {
 			for(Course each : secondary) {
 				if(successes!=4) {
 					try {
-						if(addCourse(studentId, each.getCourseId()) == Status.SUCCESS) {
+						if(addCourse(studentId, each.getCourseId()) == StatusConstants.SUCCESS) {
 							successes = successes + 1;
 						}
 					}catch (InvalidCourseIdException | RegistrationFailureException ex) {}
@@ -81,11 +81,11 @@ public class StudentImpl implements StudentInterface {
 	        registrationDao.clearStudentCourses(studentId);
 			throw new RegistrationFailureException("Registration Failed");
 		}
-		return Status.SUCCESS;
+		return StatusConstants.SUCCESS;
 	}
 
 	@Override
-	public Status addCourse(String studentId, String courseId)
+	public StatusConstants addCourse(String studentId, String courseId)
 			throws InvalidCourseIdException, RegistrationFailureException{
 		RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
 		if(registrationDao.getStudentCount(courseId) >= 10) {
@@ -97,7 +97,7 @@ public class StudentImpl implements StudentInterface {
 	}
 
 	@Override
-	public Status dropCourse(String studentId, String courseId) throws InvalidCourseIdException{
+	public StatusConstants dropCourse(String studentId, String courseId) throws InvalidCourseIdException{
 		RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
 		return registrationDao.removeRegistration(courseId, studentId);
 	}
@@ -124,7 +124,7 @@ public class StudentImpl implements StudentInterface {
 	}
 
 	@Override
-	public Status payFee(String studentId, Payment details) {
+	public StatusConstants payFee(String studentId, Payment details) {
 		PaymentsDaoInterface paymentsDao = PaymentsDao.getInstance();
 		return paymentsDao.addTransaction(studentId, details);
 	}

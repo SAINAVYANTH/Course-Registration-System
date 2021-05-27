@@ -6,15 +6,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import com.flipkart.bean.Professor;
 import com.flipkart.bean.UserLogin;
-import com.flipkart.constants.SQLQueries;
-import com.flipkart.constants.Status;
-import com.flipkart.constants.UserRole;
+import com.flipkart.constants.SQLQueryConstants;
+import com.flipkart.constants.StatusConstants;
+import com.flipkart.constants.UserRoleConstants;
 import com.flipkart.exception.InvalidProfessorIdException;
 import com.flipkart.utils.DBUtils;
 
 public class ProfessorDao implements ProfessorDaoInterface{
+	
+	private static Logger logger = Logger.getLogger(ProfessorDao.class);
 	private static volatile ProfessorDao instance = null;
 	
 	private ProfessorDao() {};
@@ -28,13 +32,12 @@ public class ProfessorDao implements ProfessorDaoInterface{
 		return instance;
 	}
 	
-	
-	public Status addProfessor(Professor details) {
+	public StatusConstants addProfessor(Professor details) {
 		Connection conn = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.ADD_PROFESSOR;
+			String raw_stmt = SQLQueryConstants.ADD_PROFESSOR;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, details.getId());
 			prep_stmt.setString(2, details.getName());
@@ -45,40 +48,44 @@ public class ProfessorDao implements ProfessorDaoInterface{
 			prep_stmt.setString(7, details.getDesignation());
 			prep_stmt.executeUpdate();
 			CredentialsDaoInterface credentialsDao = CredentialsDao.getInstance();
-			credentialsDao.saveCredentials(new UserLogin(details.getId(), details.getId(), UserRole.PROFESSOR));
-			return Status.SUCCESS;
+			credentialsDao.saveCredentials(new UserLogin(details.getId(), details.getId(), UserRoleConstants.PROFESSOR));
+			return StatusConstants.SUCCESS;
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
-		return Status.FAIL;
+		return StatusConstants.FAIL;
 	}
 	
-	public Status removeProfessor(String id) throws InvalidProfessorIdException{
+	public StatusConstants removeProfessor(String id) throws InvalidProfessorIdException{
 		Connection conn = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.REMOVE_PROFESSOR;
+			String raw_stmt = SQLQueryConstants.REMOVE_PROFESSOR;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, id);
 			prep_stmt.executeUpdate();
-			return Status.SUCCESS;
+			return StatusConstants.SUCCESS;
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
 		throw new InvalidProfessorIdException("Invalid id " + id);
 	}
@@ -88,7 +95,7 @@ public class ProfessorDao implements ProfessorDaoInterface{
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.GET_PROFESSOR_DETIALS;
+			String raw_stmt = SQLQueryConstants.GET_PROFESSOR_DETIALS;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, id);
 			ResultSet result =  prep_stmt.executeQuery();
@@ -96,14 +103,16 @@ public class ProfessorDao implements ProfessorDaoInterface{
 			return new Professor(result.getString(1), result.getString(2), result.getDate(3), result.getString(4), 
 					result.getString(5), result.getString(6), result.getString(7));
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
 		throw new InvalidProfessorIdException("Invalid id " + id);
 	}

@@ -20,7 +20,7 @@ import com.flipkart.bean.ReportCard;
 import com.flipkart.bean.Scholarship;
 import com.flipkart.bean.Upi;
 import com.flipkart.constants.GradeConstants;
-import com.flipkart.constants.Status;
+import com.flipkart.constants.StatusConstants;
 import com.flipkart.exception.GradesNotGivenException;
 import com.flipkart.exception.InvalidCourseIdException;
 import com.flipkart.exception.InvalidStudentIdException;
@@ -168,7 +168,7 @@ public class StudentCrsMenu {
 		{
 			System.out.println("Enter Course Code");
 			String courseCode = io.input.next();
-			if(studentInterface.addCourse(student_id,courseCode ) == Status.SUCCESS)
+			if(studentInterface.addCourse(student_id,courseCode ) == StatusConstants.SUCCESS)
 			{
 				System.out.println("Successfully Registered for course: "+courseCode+"\n");
 			}
@@ -213,7 +213,7 @@ public class StudentCrsMenu {
 			System.out.println("Enter the credit card number");
 			modeid = io.input.nextLine();
 			if(verifyCardNumber(modeid)) {
-				details = new Credit(amt,Status.SUCCESS,modeid);
+				details = new Credit(amt,StatusConstants.SUCCESS,modeid);
 			}
 			else {
 				logger.error("Invalid credit card number! Aborting transaction.");
@@ -224,7 +224,7 @@ public class StudentCrsMenu {
 			System.out.println("Enter the debit card numbe");
 			modeid = io.input.nextLine();
 			if(verifyCardNumber(modeid)) {
-				details = new Debit(amt,Status.SUCCESS,modeid);
+				details = new Debit(amt,StatusConstants.SUCCESS,modeid);
 			}
 			else {
 				logger.error("Invalid debit card number! Aborting transaction.");
@@ -234,12 +234,12 @@ public class StudentCrsMenu {
 		else if(paymentMode == 3) {
 			System.out.println("Enter the scholarship id");
 			modeid = io.input.nextLine();
-			details = new Scholarship(amt,Status.SUCCESS,modeid);
+			details = new Scholarship(amt,StatusConstants.SUCCESS,modeid);
 		}
 		else if(paymentMode == 4) {
 			System.out.println("Enter the upi id");
 			modeid = io.input.nextLine();
-			details = new Upi(amt,Status.SUCCESS,modeid);
+			details = new Upi(amt,StatusConstants.SUCCESS,modeid);
 		}
 		studentInterface.payFee(student_id, details);
 		System.out.println("Payment Notification: Payment Succeeded!");
@@ -264,8 +264,8 @@ public class StudentCrsMenu {
 		String courseCode = io.input.next();
 		try
 		{
-			Status status=studentInterface.dropCourse(student_id, courseCode);
-			if(status.equals(Status.SUCCESS)) {
+			StatusConstants status=studentInterface.dropCourse(student_id, courseCode);
+			if(status.equals(StatusConstants.SUCCESS)) {
 				System.out.println("Course Drop Successful");
 			}
 			else {

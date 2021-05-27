@@ -6,16 +6,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import com.flipkart.bean.Student;
 import com.flipkart.bean.UserLogin;
-import com.flipkart.constants.SQLQueries;
-import com.flipkart.constants.Status;
-import com.flipkart.constants.UserRole;
+import com.flipkart.constants.SQLQueryConstants;
+import com.flipkart.constants.StatusConstants;
+import com.flipkart.constants.UserRoleConstants;
 import com.flipkart.exception.InvalidStudentIdException;
 import com.flipkart.utils.DBUtils;
 
 public class StudentDao implements StudentDaoInterface {
-
+	
+	private static Logger logger = Logger.getLogger(StudentDao.class);
 	private static volatile StudentDao instance=null;
 	
 	private StudentDao() {};
@@ -32,13 +35,12 @@ public class StudentDao implements StudentDaoInterface {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public Status addStudent(Student student) {
-		// TODO Auto-generated method stub
+	public StatusConstants addStudent(Student student) {
 		Connection conn = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.ADD_STUDENT;
+			String raw_stmt = SQLQueryConstants.ADD_STUDENT;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, student.getId());
 			prep_stmt.setString(2, student.getName());
@@ -51,19 +53,21 @@ public class StudentDao implements StudentDaoInterface {
 			prep_stmt.setString(9, Boolean.toString(false));
 			prep_stmt.executeUpdate();
 			CredentialsDaoInterface credentialsDao = CredentialsDao.getInstance();
-			credentialsDao.saveCredentials(new UserLogin(student.getId(), student.getId(), UserRole.STUDENT));
-			return Status.SUCCESS;
+			credentialsDao.saveCredentials(new UserLogin(student.getId(), student.getId(), UserRoleConstants.STUDENT));
+			return StatusConstants.SUCCESS;
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
-		return Status.FAIL;
+		return StatusConstants.FAIL;
 	}
 	
 	public Student getStudentDetails(String studentId) throws InvalidStudentIdException {
@@ -71,7 +75,7 @@ public class StudentDao implements StudentDaoInterface {
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.GET_STUDENT_DETAILS;
+			String raw_stmt = SQLQueryConstants.GET_STUDENT_DETAILS;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, studentId);
 			ResultSet result =  prep_stmt.executeQuery();
@@ -79,64 +83,70 @@ public class StudentDao implements StudentDaoInterface {
 			return new Student(result.getString(1), result.getString(2), result.getDate(3), result.getString(4), 
 					result.getString(5), result.getString(6), result.getString(7), result.getString(8));
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
 		throw new InvalidStudentIdException("Invalid student id " + studentId);
 	}
 	
-	public Status deleteStudent(String studentID) throws InvalidStudentIdException{
+	public StatusConstants deleteStudent(String studentID) throws InvalidStudentIdException{
 		Connection conn = null;
 		PreparedStatement prep_stmt = null;
 	    try{
 	    	conn = DBUtils.getConnection();
-	        prep_stmt = conn.prepareStatement(SQLQueries.DEL_STUDENT);
+	        prep_stmt = conn.prepareStatement(SQLQueryConstants.DEL_STUDENT);
 	        prep_stmt.setString(1, studentID.toString());
 	        prep_stmt.executeUpdate();
 	        RegistrationDaoInterface registrationDao = RegistrationDao.getInstance();
 	        return registrationDao.clearStudentCourses(studentID);
 	    }catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
 	    throw new InvalidStudentIdException("Invalid student id " + studentID);
 	}
 
 	@Override
-	public Status changeStudentVerificationStatus(String studentId) throws InvalidStudentIdException {
+	public StatusConstants changeStudentVerificationStatus(String studentId) throws InvalidStudentIdException {
 		Connection conn = null;
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.CH_STUDENT_VERIFICATION;
+			String raw_stmt = SQLQueryConstants.CH_STUDENT_VERIFICATION;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, Boolean.toString(true));
 			prep_stmt.setString(2, studentId);
 			prep_stmt.executeUpdate();
-			return Status.SUCCESS;
+			return StatusConstants.SUCCESS;
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
-		return Status.FAIL;
+		return StatusConstants.FAIL;
 	}
 
 	@Override
@@ -145,21 +155,23 @@ public class StudentDao implements StudentDaoInterface {
 		PreparedStatement prep_stmt = null;
 		try {
 			conn = DBUtils.getConnection();
-			String raw_stmt = SQLQueries.GET_STUDENT_VERIFICATION;
+			String raw_stmt = SQLQueryConstants.GET_STUDENT_VERIFICATION;
 			prep_stmt = conn.prepareStatement(raw_stmt);
 			prep_stmt.setString(1, studentId);
 			ResultSet result =  prep_stmt.executeQuery();
 			result.absolute(1);
 			return Boolean.parseBoolean(result.getString(1));
 		}catch(SQLException se){
-			se.printStackTrace();
+			logger.error(se.getMessage());
 		}catch(Exception e){
-		    e.printStackTrace();
+		    logger.error(e.getMessage());
 		}finally{
 			try{
 		    	if(prep_stmt!=null)
 		            prep_stmt.close();
-		    }catch(SQLException se2){}
+		    }catch(SQLException se2){
+		    	logger.error(se2.getMessage());
+		    }
 		}
 		throw new InvalidStudentIdException("Invalid student id " + studentId);
 	}

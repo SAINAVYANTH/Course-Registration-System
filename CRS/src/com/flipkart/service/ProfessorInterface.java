@@ -6,7 +6,7 @@ import java.util.List;
 import com.flipkart.bean.Course;
 import com.flipkart.bean.Student;
 import com.flipkart.constants.GradeConstants;
-import com.flipkart.constants.Status;
+import com.flipkart.constants.StatusConstants;
 import com.flipkart.exception.InvalidCourseIdException;
 import com.flipkart.exception.InvalidGradeException;
 
@@ -16,7 +16,7 @@ public interface ProfessorInterface {
 	 * @param Professor id, Course id
 	 * @return Status (Success/ Fail)
 	 */
-	public Status teachCourse(String id, String courseId);
+	public StatusConstants teachCourse(String id, String courseId);
 	
 	/**
 	 * Function to view courses a professor is teaching

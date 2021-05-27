@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class IO {
 	public Scanner input;
-	private static IO instance = null;
+	private static volatile IO instance = null;
 	
 	private IO() {
 		input = new Scanner(System.in);
@@ -12,7 +12,9 @@ public class IO {
 	
 	public static IO getInstance() {
 		if(instance == null) {
-			instance = new IO();
+			synchronized(IO.class) {
+				instance = new IO();
+			}
 		}
 		return instance;
 	}

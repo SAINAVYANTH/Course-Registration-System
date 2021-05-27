@@ -1,11 +1,11 @@
 package com.flipkart.bean;
 
-import com.flipkart.constants.PaymentModes;
-import com.flipkart.constants.Status;
+import com.flipkart.constants.PaymentModeConstants;
+import com.flipkart.constants.StatusConstants;
 
 public class Scholarship extends Payment{
-	public Scholarship(String amount, Status status, String scholarshipId) {
-		super(PaymentModes.SCHOLARSHIP, amount, status);
+	public Scholarship(String amount, StatusConstants status, String scholarshipId) {
+		super(PaymentModeConstants.SCHOLARSHIP, amount, status);
 		this.scholarshipId = scholarshipId;
 	}
 

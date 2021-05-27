@@ -1,11 +1,11 @@
 package com.flipkart.bean;
 
-import com.flipkart.constants.PaymentModes;
-import com.flipkart.constants.Status;
+import com.flipkart.constants.PaymentModeConstants;
+import com.flipkart.constants.StatusConstants;
 
 public class Upi extends Payment{
-	public Upi( String amount, Status status, String upiId) {
-		super(PaymentModes.UPI, amount, status);
+	public Upi( String amount, StatusConstants status, String upiId) {
+		super(PaymentModeConstants.UPI, amount, status);
 		this.upiId = upiId;
 	}
 

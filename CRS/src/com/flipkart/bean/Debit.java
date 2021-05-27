@@ -1,13 +1,13 @@
 package com.flipkart.bean;
 
-import com.flipkart.constants.PaymentModes;
-import com.flipkart.constants.Status;
+import com.flipkart.constants.PaymentModeConstants;
+import com.flipkart.constants.StatusConstants;
 
 public class Debit extends Payment{
 	private String number;
 	
-	public Debit(String amount, Status status, String number) {
-		super(PaymentModes.DEBIT, amount,  status);
+	public Debit(String amount, StatusConstants status, String number) {
+		super(PaymentModeConstants.DEBIT, amount,  status);
 		this.number = number;
 	}
 	
