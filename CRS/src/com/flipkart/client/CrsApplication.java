@@ -67,7 +67,7 @@ public class CrsApplication {
 			}
 			else if(role.equals(UserRoleConstants.ADMIN)) {
 				AdminCrsMenu clientadmin = new AdminCrsMenu();
-				clientadmin.AdminMenu();
+				clientadmin.AdminMenu(user.getUserId());
 
 			}
 		}

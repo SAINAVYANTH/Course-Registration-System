@@ -52,4 +52,10 @@ public class SQLQueryConstants {
 	public static final String DEL_STUDENT ="delete from students where id = ?";
 	public static final String CH_STUDENT_VERIFICATION = "update students set verified=? where id=?";
 	public static final String GET_STUDENT_VERIFICATION = "select verified from students where id=?";
+	
+	//*******Notification DAO********//
+	public static final String GET_ALL_NOTIFICATIONS = "select * from notification where studentid=?";
+	public static final String GET_UNREAD_NOTIFICATIONS = "select * from notification where studentid=? AND unread=?";
+	public static final String ADD_NOTIFICATION = "insert into notification values(?,?,?,?)";
+	public static final String MARK_AS_READ = "update notification set unread=? where studentid=? AND message=? AND extras=?";
 }

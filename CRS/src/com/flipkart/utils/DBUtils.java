@@ -13,8 +13,9 @@ public class DBUtils{
 	
 	private static Connection connection = null;
 	
+	/** Function to obtain the db connection
+	 * */
 	public static Connection getConnection() {
-		
         if (connection != null)
             return connection;
         else {

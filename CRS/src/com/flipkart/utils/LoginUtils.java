@@ -13,6 +13,9 @@ import com.flipkart.exception.InvalidCredentialsException;
 public class LoginUtils {
 	private static Logger logger = Logger.getLogger(LoginUtils.class);
 	
+	/** Function to login to a user
+	 * @param String username, String password
+	 * */
 	public static UserLogin Login(String username, String password) {
 		CredentialsDaoInterface credentialsDao = CredentialsDao.getInstance();
 		// Function call here...
@@ -25,6 +28,9 @@ public class LoginUtils {
 		return new UserLogin("","",UserRoleConstants.ADMIN);
 	}
 	
+	/** Function to update the password of a user
+	 * @param String username, String password
+	 * */
 	public static StatusConstants updatePassword(String username, String password) {
 		CredentialsDaoInterface credentialsDao = CredentialsDao.getInstance();
 		// Function call here...

@@ -15,6 +15,7 @@ import com.flipkart.bean.Course;
 import com.flipkart.bean.CourseRegistration;
 import com.flipkart.bean.Credit;
 import com.flipkart.bean.Debit;
+import com.flipkart.bean.Notification;
 import com.flipkart.bean.Payment;
 import com.flipkart.bean.ReportCard;
 import com.flipkart.bean.Scholarship;
@@ -26,6 +27,8 @@ import com.flipkart.exception.InvalidCourseIdException;
 import com.flipkart.exception.InvalidStudentIdException;
 import com.flipkart.exception.RegistrationFailureException;
 import com.flipkart.input.IO;
+import com.flipkart.service.NotificationImpl;
+import com.flipkart.service.NotificationInterface;
 import com.flipkart.service.StudentImpl;
 import com.flipkart.service.StudentInterface;
 import com.flipkart.utils.CourseUtils;
@@ -55,8 +58,9 @@ public class StudentCrsMenu {
 					System.out.println("Press 4 to drop a course");
 					System.out.println("Press 5 to view registered courses");
 					System.out.println("Press 6 to view grades (Report Card)");
-					System.out.println("Press 7 to pay fees");
-					System.out.println("Press 8 to Logout");
+					System.out.println("Press 7 to view notifications");
+					System.out.println("Press 8 to pay fees");
+					System.out.println("Press 9 to Logout");
 					
 					int choice=io.input.nextInt();
 					io.input.nextLine();
@@ -79,10 +83,13 @@ public class StudentCrsMenu {
 						case 6:
 							getGrades(student_id);
 							break;
-						case 7: 
-							payFees(student_id);
+						case 7:
+							showNotifications(student_id);
 							break;
 						case 8: 
+							payFees(student_id);
+							break;
+						case 9: 
 							System.out.println("Logged Out Successfully!\n");
 							return;
 							
@@ -97,6 +104,29 @@ public class StudentCrsMenu {
 			logger.error("Invalid student id" + student_id);
 		}
 		return;
+	}
+	
+	private void showNotifications(String studentId) {
+		System.out.println("\n----------Notifications-----------");
+		System.out.println("Press 1 to view unread notifications only");
+		System.out.println("Press 2 to view all notifications");
+		List<Notification> notifications = null;
+		NotificationInterface notificationService = NotificationImpl.getInstance();
+		int n = io.input.nextInt();
+		io.input.hasNextLine();
+		if (n==1) {
+			notifications = notificationService.getUnreadNotifications(studentId);
+		}
+		else {
+			notifications = notificationService.getAllNotifications(studentId);
+		}
+		notifications.forEach(each -> {
+			System.out.println("\nNotification Message: ");
+			System.out.println( each.getMessage());
+			System.out.println("Notification Details: ");
+			System.out.println(each.getExtras());
+		});
+		notifications.forEach( each -> notificationService.markAsread(each) );
 	}
 	
 	private void registerCourses(String studentId) {
@@ -126,6 +156,8 @@ public class StudentCrsMenu {
 			secondary.add(details);
 			CourseRegistration registration = new CourseRegistration(primary.toArray(new Course[0]), secondary.toArray(new Course[0]));
 			studentInterface.semesterRegistration(studentId, registration);
+			NotificationInterface notificationService = NotificationImpl.getInstance();
+			notificationService.addNotification(new Notification(studentId, "Semester registration Success!", "Amount payable: 1,20,000"));
 			System.out.println("Successfully Completed registration");
 		}
 		catch(RegistrationFailureException ex) {
@@ -214,6 +246,8 @@ public class StudentCrsMenu {
 			modeid = io.input.nextLine();
 			if(verifyCardNumber(modeid)) {
 				details = new Credit(amt,StatusConstants.SUCCESS,modeid);
+				System.out.println("Enter the cvv");
+				io.input.nextLine();
 			}
 			else {
 				logger.error("Invalid credit card number! Aborting transaction.");
@@ -225,6 +259,8 @@ public class StudentCrsMenu {
 			modeid = io.input.nextLine();
 			if(verifyCardNumber(modeid)) {
 				details = new Debit(amt,StatusConstants.SUCCESS,modeid);
+				System.out.println("Enter the cvv");
+				io.input.nextLine();
 			}
 			else {
 				logger.error("Invalid debit card number! Aborting transaction.");
@@ -242,6 +278,9 @@ public class StudentCrsMenu {
 			details = new Upi(amt,StatusConstants.SUCCESS,modeid);
 		}
 		studentInterface.payFee(student_id, details);
+		NotificationInterface notificationService = NotificationImpl.getInstance();
+		notificationService.addNotification(new Notification(student_id, "Payment succesfull for the amount " + details.getAmount(), 
+				"Transaction id: " + details.getTransactionId() + ",  Timestamp: "+details.getTimestamp()));
 		System.out.println("Payment Notification: Payment Succeeded!");
 	}
 

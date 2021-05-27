@@ -17,7 +17,6 @@ import com.flipkart.exception.RegistrationFailureException;
 
 public interface StudentInterface {
 	
-	
 	/**
 	 * Function to give grades to students
 	 * @param Professor id, Course Id, HashTable of StudentId and Grade given

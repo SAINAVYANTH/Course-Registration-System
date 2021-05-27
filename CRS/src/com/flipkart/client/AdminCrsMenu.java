@@ -4,9 +4,11 @@
 package com.flipkart.client;
 
 import java.sql.Date;
+import java.time.LocalTime;
 import java.util.List;
 
 import com.flipkart.bean.Course;
+import com.flipkart.bean.Notification;
 import com.flipkart.bean.Professor;
 import com.flipkart.exception.InvalidCourseIdException;
 import com.flipkart.exception.InvalidProfessorIdException;
@@ -14,6 +16,8 @@ import com.flipkart.exception.InvalidStudentIdException;
 import com.flipkart.input.IO;
 import com.flipkart.service.AdminImpl;
 import com.flipkart.service.AdminInterface;
+import com.flipkart.service.NotificationImpl;
+import com.flipkart.service.NotificationInterface;
 import com.flipkart.utils.CourseUtils;
 
 /**
@@ -24,7 +28,7 @@ public class AdminCrsMenu {
 
 	private static IO io = IO.getInstance();
 	
-	public void AdminMenu() {
+	public void AdminMenu(String adminId) {
 		System.out.println("\n----------Admin Menu-----------");
 		System.out.println("Press 1 to view all courses");
 		System.out.println("Press 2 to add course");
@@ -35,10 +39,10 @@ public class AdminCrsMenu {
 		System.out.println("Press 7 to remove professor");
 		System.out.println("Press 8 to exit");
 		
-		adminchoice();
+		adminchoice(adminId);
 	}
 	@SuppressWarnings("deprecation")
-	public void adminchoice() {
+	public void adminchoice(String adminId) {
 		int n;
 		AdminInterface admininterface = AdminImpl.getInstance();
 		Course course = new Course("","","");
@@ -104,6 +108,8 @@ public class AdminCrsMenu {
 				String id = io.input.nextLine();
 				try {
 					admininterface.verifyStudentRegistration(id);
+					NotificationInterface notifications = NotificationImpl.getInstance();
+					notifications.addNotification(new Notification(id, "Registration verified by: " + adminId, "timestamp: " + LocalTime.now().toString()));
 					System.out.println("Successfully verified student profile");
 				}catch(InvalidStudentIdException ex) {
 					System.out.println("Invalid student id " + id + ". Returning to menu");
@@ -138,7 +144,7 @@ public class AdminCrsMenu {
 			else {
 				System.out.println("Please enter a valid choice. Returning to main menu.");
 			}
-			AdminMenu();
+			AdminMenu(adminId);
 		}while(n!=8);
 		System.out.println("Loggin out! Returning to the main menu.");
 		return;
