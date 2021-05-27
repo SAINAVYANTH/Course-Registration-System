@@ -120,13 +120,18 @@ public class StudentCrsMenu {
 		else {
 			notifications = notificationService.getAllNotifications(studentId);
 		}
-		notifications.forEach(each -> {
-			System.out.println("\nNotification Message: ");
-			System.out.println( each.getMessage());
-			System.out.println("Notification Details: ");
-			System.out.println(each.getExtras());
-		});
-		notifications.forEach( each -> notificationService.markAsread(each) );
+		if(notifications.size() == 0) {
+			System.out.println("No new unread notifications!");
+		}
+		else {
+			notifications.forEach(each -> {
+				System.out.println("\nNotification Message: ");
+				System.out.println( each.getMessage());
+				System.out.println("Notification Details: ");
+				System.out.println(each.getExtras());
+			});
+			notifications.forEach( each -> notificationService.markAsread(each) );
+		}
 	}
 	
 	private void registerCourses(String studentId) {
