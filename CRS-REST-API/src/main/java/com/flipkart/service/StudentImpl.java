@@ -50,21 +50,21 @@ public class StudentImpl implements StudentInterface {
 
 	@Override
 	public StatusConstants semesterRegistration(String studentId, CourseRegistration courses) throws RegistrationFailureException {
-		Course[] primary = courses.getPrimaryCourses();
-		Course[] secondary = courses.getSecondaryCourses();
+		String[] primary = courses.getPrimaryCourses();
+		String[] secondary = courses.getSecondaryCourses();
 		int successes = 0;
-		for(Course each : primary) {
+		for(String each : primary) {
 			try {
-				if(addCourse(studentId, each.getCourseId()) == StatusConstants.SUCCESS) {
+				if(addCourse(studentId, each) == StatusConstants.SUCCESS) {
 					successes = successes + 1;
 				}
 			}catch (InvalidCourseIdException | RegistrationFailureException ex) {}
 		}
 		if(successes <= 4 && successes >=2) {
-			for(Course each : secondary) {
+			for(String each : secondary) {
 				if(successes!=4) {
 					try {
-						if(addCourse(studentId, each.getCourseId()) == StatusConstants.SUCCESS) {
+						if(addCourse(studentId, each) == StatusConstants.SUCCESS) {
 							successes = successes + 1;
 						}
 					}catch (InvalidCourseIdException | RegistrationFailureException ex) {}

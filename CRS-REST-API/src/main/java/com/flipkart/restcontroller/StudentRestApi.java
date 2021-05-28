@@ -1,6 +1,7 @@
 package com.flipkart.restcontroller;
 
 import java.sql.SQLException;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -14,8 +15,12 @@ import javax.ws.rs.core.Response;
 
 import com.flipkart.bean.Course;
 import com.flipkart.bean.CourseRegistration;
+import com.flipkart.bean.Credit;
+import com.flipkart.bean.Debit;
 import com.flipkart.bean.Notification;
-import com.flipkart.bean.Payment;
+import com.flipkart.bean.Upi;
+import com.flipkart.bean.Scholarship;
+import com.flipkart.constants.StatusConstants;
 import com.flipkart.exception.GradesNotGivenException;
 import com.flipkart.exception.InvalidCourseIdException;
 import com.flipkart.exception.InvalidStudentIdException;
@@ -240,7 +245,7 @@ public class StudentRestApi {
 					NotificationInterface notification = NotificationImpl.getInstance();
 					List<Notification> notifyList = notification.getUnreadNotifications(id);
 					if(notifyList.size() == 0) {
-						return Response.status(200).entity("No notifications for this user!").build();
+						return Response.status(200).entity("No new notifications for this user!").build();
 					}
 					else {
 						return Response.status(200).entity(notifyList).build();
@@ -259,17 +264,87 @@ public class StudentRestApi {
 		}
 	}
 	
+	@GET
+	@Path("/{sessionid}/getPaymentOptions")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPaymentsOptions(@PathParam("sessionid") String sessionid) {
+		SessionInterface session = SessionImpl.getInstance();
+		if(session.checkSession(sessionid)) {
+			return Response.status(200).entity("Available methods: Credit, Debit, Scholarship, Upi").build();
+		}
+		else {
+			return Response.status(401).entity("Session expired! Login once again to get new session id.").build();
+		}
+	}
+	
 	@POST
-	@Path("/{sessionid}/payFee")
+	@Path("/{sessionid}/payFeeCredit")
 	@Consumes("application/json")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response payFee(@PathParam("sessionid") String sessionid ,Payment details) {
+	public Response payFeeCredit(@PathParam("sessionid") String sessionid ,Hashtable<String, String> details) {
 		SessionInterface session = SessionImpl.getInstance();
 		if(session.checkSession(sessionid)) {
 			String id = session.getUserFromSession(sessionid);
 			StudentInterface student = StudentImpl.getInstance();
 			try {
 				if(student.getVerificationStatus(id)) {
+					Credit card = new Credit(id,StatusConstants.SUCCESS, details.get("number"));
+					student.payFee(id, card);
+					return Response.status(200).entity("Successfully paid the fee!!").build();
+				}
+				else {
+					return Response.status(200).entity("Your profile verification is still pending!").build();
+				}
+			}
+			catch(InvalidStudentIdException ex) {
+				return Response.status(400).entity("Invalid credentials").build();
+			}
+		}
+		else {
+			return Response.status(401).entity("Session expired! Login once again to get new session id.").build();
+		}
+	}
+	
+	@POST
+	@Path("/{sessionid}/payFeeDebit")
+	@Consumes("application/json")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response payFeeDebit(@PathParam("sessionid") String sessionid ,Hashtable<String, String> details) {
+		SessionInterface session = SessionImpl.getInstance();
+		if(session.checkSession(sessionid)) {
+			String id = session.getUserFromSession(sessionid);
+			StudentInterface student = StudentImpl.getInstance();
+			try {
+				if(student.getVerificationStatus(id)) {
+					Debit card = new Debit(id,StatusConstants.SUCCESS, details.get("number"));
+					student.payFee(id, card);
+					return Response.status(200).entity("Successfully paid the fee!!").build();
+				}
+				else {
+					return Response.status(200).entity("Your profile verification is still pending!").build();
+				}
+			}
+			catch(InvalidStudentIdException ex) {
+				return Response.status(400).entity("Invalid credentials").build();
+			}
+		}
+		else {
+			return Response.status(401).entity("Session expired! Login once again to get new session id.").build();
+		}
+	}
+	
+	@POST
+	@Path("/{sessionid}/payFeeScholarship")
+	@Consumes("application/json")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response payFeeScholarship(@PathParam("sessionid") String sessionid , String schId) {
+		SessionInterface session = SessionImpl.getInstance();
+		if(session.checkSession(sessionid)) {
+			String id = session.getUserFromSession(sessionid);
+			StudentInterface student = StudentImpl.getInstance();
+			try {
+				if(student.getVerificationStatus(id)) {
+					Scholarship details = new Scholarship(id,StatusConstants.SUCCESS, schId);
 					student.payFee(id, details);
 					return Response.status(200).entity("Successfully paid the fee!!").build();
 				}
@@ -286,4 +361,31 @@ public class StudentRestApi {
 		}
 	}
 	
+	@POST
+	@Path("/{sessionid}/payFeeUpi")
+	@Consumes("application/json")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response payFeeUpi(@PathParam("sessionid") String sessionid , String upiId) {
+		SessionInterface session = SessionImpl.getInstance();
+		if(session.checkSession(sessionid)) {
+			String id = session.getUserFromSession(sessionid);
+			StudentInterface student = StudentImpl.getInstance();
+			try {
+				if(student.getVerificationStatus(id)) {
+					Upi details = new Upi(id,StatusConstants.SUCCESS, upiId);
+					student.payFee(id, details);
+					return Response.status(200).entity("Successfully paid the fee!!").build();
+				}
+				else {
+					return Response.status(200).entity("Your profile verification is still pending!").build();
+				}
+			}
+			catch(InvalidStudentIdException ex) {
+				return Response.status(400).entity("Invalid credentials").build();
+			}
+		}
+		else {
+			return Response.status(401).entity("Session expired! Login once again to get new session id.").build();
+		}
+	}
 }

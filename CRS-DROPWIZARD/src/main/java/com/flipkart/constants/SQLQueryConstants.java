@@ -33,7 +33,7 @@ public class SQLQueryConstants {
 	
 	//*******PROFESSOR DAO********//
 	public static final String ADD_PROFESSOR ="insert into professors values(?,?,?,?,?,?,?)";
-	public static final String REMOVE_PROFESSOR = "select * from professors where id=?";
+	public static final String REMOVE_PROFESSOR = "delete from professors where id=?";
 	public static final String GET_PROFESSOR_DETIALS ="select * from professors where id=?";
 	
 	//*******REGISTRATION DAO********//	

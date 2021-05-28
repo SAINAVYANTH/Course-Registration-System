@@ -21,7 +21,7 @@ import com.flipkart.service.StudentInterface;
 import com.flipkart.utils.LoginUtils;
 
 
-@Path("/crs")
+@Path("/home")
 public class CrsRestApi {
 	
 	@POST

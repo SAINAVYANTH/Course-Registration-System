@@ -4,26 +4,26 @@ public class CourseRegistration {
 	
 	public CourseRegistration() {};
 	
-	public CourseRegistration(Course[] primaryCourses, Course[] secondaryCourses) {
+	public CourseRegistration(String[] primaryCourses, String[] secondaryCourses) {
 		super();
 		this.primaryCourses = primaryCourses;
 		this.secondaryCourses = secondaryCourses;
 	}
 	
-	private Course[] primaryCourses;
-	private Course[] secondaryCourses;
+	private String[] primaryCourses;
+	private String[] secondaryCourses;
 	private String semester;
 	
-	public Course[] getPrimaryCourses() {
+	public String[] getPrimaryCourses() {
 		return primaryCourses;
 	}
-	public void setPrimaryCourses(Course[] primaryCourses) {
+	public void setPrimaryCourses(String[] primaryCourses) {
 		this.primaryCourses = primaryCourses;
 	}
-	public Course[] getSecondaryCourses() {
+	public String[] getSecondaryCourses() {
 		return secondaryCourses;
 	}
-	public void setSecondaryCourses(Course[] secondaryCourses) {
+	public void setSecondaryCourses(String[] secondaryCourses) {
 		this.secondaryCourses = secondaryCourses;
 	}
 	public String getSemester() {
